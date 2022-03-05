@@ -57,6 +57,19 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-environ"
+version = "0.8.1"
+description = "A package that allows you to utilize 12factor inspired environment variables to configure your Django application."
+category = "main"
+optional = false
+python-versions = ">=3.4,<4"
+
+[package.extras]
+develop = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)", "furo (>=2021.8.17b43,<2021.9.0)", "sphinx (>=3.5.0)", "sphinx-notfound-page"]
+docs = ["furo (>=2021.8.17b43,<2021.9.0)", "sphinx (>=3.5.0)", "sphinx-notfound-page"]
+testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
+
+[[package]]
 name = "factory-boy"
 version = "3.2.1"
 description = "A versatile test fixtures replacement based on thoughtbot's factory_bot for Ruby."
@@ -213,7 +226,7 @@ python-versions = ">=2"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "9a9ffdc5bb20ea95b809d72f6b4a0a1965756459e6513f74e6e9d2c5b1cf36af"
+content-hash = "5bd2720918c6250fab50c2cbb7f0e4f116f2791bf819b7d2edcfef4ae364e0be"
 
 [metadata.files]
 asgiref = [
@@ -235,6 +248,10 @@ colorama = [
 django = [
     {file = "Django-4.0.3-py3-none-any.whl", hash = "sha256:1239218849e922033a35d2a2f777cb8bee18bd725416744074f455f34ff50d0c"},
     {file = "Django-4.0.3.tar.gz", hash = "sha256:77ff2e7050e3324c9b67e29b6707754566f58514112a9ac73310f60cd5261930"},
+]
+django-environ = [
+    {file = "django-environ-0.8.1.tar.gz", hash = "sha256:6f0bc902b43891656b20486938cba0861dc62892784a44919170719572a534cb"},
+    {file = "django_environ-0.8.1-py2.py3-none-any.whl", hash = "sha256:42593bee519a527602a467c7b682aee1a051c2597f98c45f4f4f44169ecdb6e5"},
 ]
 factory-boy = [
     {file = "factory_boy-3.2.1-py2.py3-none-any.whl", hash = "sha256:eb02a7dd1b577ef606b75a253b9818e6f9eaf996d94449c9d5ebb124f90dc795"},
