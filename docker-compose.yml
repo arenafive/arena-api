@@ -1,0 +1,30 @@
+
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+    networks:
+      - app-network
+  app:
+    build: .
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      - db
+    restart: unless-stopped
+    command: >
+      bash -c "/code/bin/wait-for-it db:5432 && /code/bin/start"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

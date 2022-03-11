@@ -1,0 +1,8 @@
+[flake8]
+exclude =
+    migrations
+
+ignore =
+   W504
+   W503
+   E501
