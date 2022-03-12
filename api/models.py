@@ -1,10 +1,14 @@
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+
+# from django.core.exceptions import ValidationError
 from django.db import models
 
 
 # Create your models here.
 class Adress(models.Model):
+    ville = models.CharField(max_length=100, default="Nouakchott")
+    quartier = models.CharField(max_length=200, default="Tevrag Zeina")
     longitude = models.CharField(max_length=500, null=True, blank=True)
     latitude = models.CharField(max_length=500, null=True, blank=True)
     longitudeDelta = models.CharField(max_length=500, null=True, blank=True)
@@ -12,39 +16,42 @@ class Adress(models.Model):
     description = models.TextField()
 
     def __str__(self):
-        return f"{self.longitude}°, {self.latitude}°"
+        return f"{self.ville},{self.quartier} - {self.longitude}°, {self.latitude}°"
+
+    class Meta:
+        unique_together = ("ville", "quartier", "description")
 
 
-class UserDetail(models.Model):
-    full_name = models.CharField(max_length=50)
-    phone_number = models.CharField(max_length=20)
-    email_adress = models.EmailField(blank=True)
+class TimeStampCreation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey()
 
-
-class Manager(models.Model):
-    details = GenericRelation(UserDetail)
+class InformationDetails(TimeStampCreation):
+    full_name = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=20)
+    email_adress = models.EmailField(blank=True)
 
     def __str__(self):
-        return self.details
+        return self.email_adress
 
 
-class Player(models.Model):
-    details = GenericRelation(UserDetail)
-
+class Manager(InformationDetails):
     def __str__(self):
-        return self.details
+        return f"{self.full_name} : {self.email_adress}"
+
+
+class Player(InformationDetails):
+    def __str__(self):
+        return f"{self.full_name} : {self.email_adress}"
 
 
 class Game(models.Model):
     GAME_CHOICES = [
         ("5", "5 vs 5"),
         ("6", "6 vs 6"),
+        ("7", "7 vs 7"),
+        ("8", "8 vs 8"),
     ]
     created_date = models.DateTimeField(auto_now_add=True)
     start_date = models.DateTimeField()
@@ -79,3 +86,76 @@ class Arena(models.Model):
 
     def __str__(self):
         return f"Cité {self.slug}"
+
+    class Meta:
+        verbose_name = "Arena"
+        verbose_name_plural = "Arena"
+
+
+class Availability(models.Model):
+    DAY_CHOICES = [
+        ("LUNDI", "LUNDI"),
+        ("MARDI", "MARDI"),
+        ("MERCREDI", "MERCREDI"),
+        ("JEUDI", "JEUDI"),
+        ("VENDREDI", "VENDREDI"),
+        ("SAMEDI", "SAMEDI"),
+        ("DIMANCHE", "DIMANCHE"),
+    ]
+
+    day = models.CharField(choices=DAY_CHOICES, max_length=10, blank=False, null=False)
+    start_hour = models.IntegerField()
+    start_minute = models.IntegerField()
+    end_hour = models.IntegerField()
+    end_minute = models.IntegerField()
+    available = models.BooleanField(default=True)
+
+    arena = models.ForeignKey(Arena, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return (
+            f"{self.start_hour}:{self.start_minute} - {self.end_hour}:{self.end_minute}"
+        )
+
+
+class Payment(TimeStampCreation):
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+
+    amount = models.IntegerField()
+    phone_number = models.CharField(max_length=20)
+
+
+class BankilyPayment(models.Model):
+    payment = GenericRelation(Payment)
+
+    def __str__(self):
+        return "By Bankily"
+
+
+class MasrviPayment(models.Model):
+    payment = GenericRelation(Payment)
+
+    def __str__(self):
+        return "By Masrvi"
+
+
+class StripePayment(models.Model):
+    payment = GenericRelation(Payment)
+    stripe_id = models.CharField(max_length=150, blank=True)
+
+    def __str__(self):
+        return "By Stripe"
+
+
+class PaymentGame(models.Model):
+    payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    to_be_refund = models.BooleanField(default=False)
+    refunded = models.BooleanField(default=False)
+
+    @property
+    def slug(self):
+        return f"paiment of {self.player} by {self.payment}"
