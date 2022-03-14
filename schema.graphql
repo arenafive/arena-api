@@ -1,0 +1,102 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+scalar DateTime
+
+type DjangoDebug {
+  sql: [DjangoDebugSQL]
+}
+
+type DjangoDebugSQL {
+  vendor: String!
+  alias: String!
+  sql: String
+  duration: Float!
+  rawSql: String!
+  params: String!
+  startTime: Float!
+  stopTime: Float!
+  isSlow: Boolean!
+  isSelect: Boolean!
+  transId: String
+  transStatus: String
+  isoLevel: String
+  encoding: String
+}
+
+type GameNode implements Node {
+  id: ID!
+  createdDate: DateTime!
+  startDate: DateTime!
+  endDate: DateTime!
+  type: GameType!
+  score: String!
+}
+
+type GameNodeConnection {
+  pageInfo: PageInfo!
+  edges: [GameNodeEdge]!
+}
+
+type GameNodeEdge {
+  node: GameNode
+  cursor: String!
+}
+
+enum GameType {
+  A_5
+  A_6
+  A_7
+  A_8
+}
+
+scalar GenericScalar
+
+type Mutation {
+  tokenAuth(username: String!, password: String!): ObtainJSONWebToken
+  verifyToken(token: String): Verify
+  refreshToken(refreshToken: String): Refresh
+  _debug: DjangoDebug
+}
+
+interface Node {
+  id: ID!
+}
+
+type ObtainJSONWebToken {
+  payload: GenericScalar!
+  refreshExpiresIn: Int!
+  token: String!
+  refreshToken: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type Query {
+  game(id: ID!): GameNode
+  games(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gt: DateTime, orderBy: String): GameNodeConnection
+  _debug: DjangoDebug
+  me(look: String): [TestNode]
+}
+
+type Refresh {
+  payload: GenericScalar!
+  refreshExpiresIn: Int!
+  token: String!
+  refreshToken: String!
+}
+
+type TestNode {
+  key: String
+}
+
+type Verify {
+  payload: GenericScalar!
+}

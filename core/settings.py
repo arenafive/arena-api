@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
 import json
+from datetime import timedelta
+
 import environ
 
 from pathlib import Path
@@ -40,9 +42,7 @@ SECRET_KEY = "django-insecure-(w^-!6)89)aq^l7@*dv8x=nn$m$@_r-qov^o3ae0mvi)7i-ex&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
 ALLOWED_HOSTS = json.loads(os.getenv("ALLOWED_HOSTS", env("ALLOWED_HOSTS")))
-
 
 # Application definition
 
@@ -53,6 +53,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "graphene_django",
+    "graphene_graphiql_explorer",
+    "graphql_jwt.refresh_token.apps.RefreshTokenConfig",
     "api",
 ]
 
@@ -66,6 +69,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+AUTHENTICATION_BACKENDS = [
+    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
 ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
@@ -86,12 +93,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {"default": env.db()}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -111,6 +116,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# GRAPHENE SETTINGS
+GRAPHENE = {
+    "SCHEMA": "core.schema.schema",
+    "SCHEMA_OUTPUT": "schema.graphql",
+    "MIDDLEWARE": [
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",
+        "graphene_django.debug.DjangoDebugMiddleware",
+    ],
+}
+
+# GRAPHQL_JWT SETTINGS
+GRAPHQL_JWT = {
+    "JWT_VERIFY_EXPIRATION": True,
+    "JWT_LONG_RUNNING_REFRESH_TOKEN": True,
+    "JWT_EXPIRATION_DELTA": timedelta(minutes=5),
+    "JWT_REFRESH_EXPIRATION_DELTA": timedelta(days=7),
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -122,7 +144,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

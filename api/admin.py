@@ -3,9 +3,27 @@ from django.contrib import admin
 # Register your models here.
 # from django.contrib.contenttypes.admin import GenericTabularInline
 # from django.contrib.contenttypes.models import ContentType
+from django import forms
+from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags, format_html
 
 from api.models import Player, Manager, Arena, InformationDetails, Adress, Game
+
+
+class GameForm(forms.ModelForm):
+    class Meta:
+        model = Game
+        fields = "__all__"
+
+    def clean_players(self):
+        type = self.cleaned_data["type"]
+        players = self.cleaned_data["players"]
+
+        if len(players) > int(type):
+            raise ValidationError(
+                f"Only {type} players are allowed to increase players change type of game."
+            )
+        return players
 
 
 class DetailAdminMixin:
@@ -117,6 +135,12 @@ class GameAdmin(admin.ModelAdmin):
         "score",
     )
     filter_horizontal = ("players",)
+    list_filter = (
+        "organised_by",
+        "start_date",
+        "type",
+    )
+    form = GameForm
 
     def attendee(self, obj):
         list = "<ul>"
