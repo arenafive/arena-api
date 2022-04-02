@@ -30,7 +30,12 @@ class TimeStampCreation(models.Model):
 class InformationDetails(TimeStampCreation):
     full_name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=20)
+    password = models.CharField(max_length=1000)
     email_adress = models.EmailField(blank=True)
+
+    class Meta:
+        abstract = True
+        unique_together = [["phone_number", "password"]]
 
     def __str__(self):
         return self.email_adress
