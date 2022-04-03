@@ -29,6 +29,9 @@ env = environ.Env(
         ],
     ),
     DATABASE_URL=(str, "db1.sqlite3"),
+    TWILIO_ACCOUNT_SID=(str, ""),
+    TWILIO_AUTH_TOKEN=(str, ""),
+    TWILIO_SERVICE=(str, ""),
 )
 
 env.read_env(os.path.join(BASE_DIR, ".env"), overwrite=True)
@@ -43,6 +46,11 @@ SECRET_KEY = "django-insecure-(w^-!6)89)aq^l7@*dv8x=nn$m$@_r-qov^o3ae0mvi)7i-ex&
 DEBUG = True
 
 ALLOWED_HOSTS = json.loads(os.getenv("ALLOWED_HOSTS", env("ALLOWED_HOSTS")))
+
+# TWILIO SETTINGS
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", env("TWILIO_ACCOUNT_SID"))
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", env("TWILIO_AUTH_TOKEN"))
+TWILIO_SERVICE = os.getenv("TWILIO_SERVICE", env("TWILIO_SERVICE"))
 
 # Application definition
 
