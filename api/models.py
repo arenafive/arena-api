@@ -35,7 +35,7 @@ class InformationDetails(TimeStampCreation):
 
     class Meta:
         abstract = True
-        unique_together = [["phone_number", "password"]]
+        unique_together = ["phone_number"]
 
     def __str__(self):
         return self.email_adress
