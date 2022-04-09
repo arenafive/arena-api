@@ -27,7 +27,8 @@ class SignIn(ClientIDMutation):
         password = input.get("password")
         hashed_password = hashers.make_password(password=password)
         try:
-            user, exist = get_user(phone_number=phone_number)
+
+            user = get_user(phone_number=phone_number)
             if not hashers.check_password(password=password, encoded=hashed_password):
                 raise Exception("error")
         except Exception:
