@@ -133,7 +133,7 @@ class ChangePlayerPassword(ClientIDMutation):
             update_or_create_player(pk=user.pk, defaults={"password": hashed_password})
         except Exception:
             raise Exception("error")
-        return ChangePlayerPassword(creatd=True)
+        return ChangePlayerPassword(created=True)
 
 
 class UserMutaion(ObjectType):
