@@ -7,14 +7,12 @@ from api.models import Game, Player, Manager
 class GameNode(DjangoObjectType):
     class Meta:
         model = Game
-
         interfaces = (relay.Node,)
 
 
 class PlayerNode(DjangoObjectType):
     class Meta:
         model = Player
-
         interfaces = (relay.Node,)
 
 
