@@ -7,7 +7,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags, format_html
 
-from api.models import Player, Manager, Arena, InformationDetails, Adress, Game
+from api.models import Player, Manager, Arena, InformationDetails, Adress, Game, Media
 
 
 class GameForm(forms.ModelForm):
@@ -61,6 +61,12 @@ class PlayerAdmin(admin.ModelAdmin):
         "email_adress",
     )
     list_filter = ("id", "full_name", "email_adress")
+
+
+@admin.register(Media)
+class MediaAdmin(admin.ModelAdmin):
+    list_display = ("id", "created_at", "updated_at", "url")
+    list_filter = ("id", "created_at", "updated_at", "url")
 
 
 @admin.register(Manager)

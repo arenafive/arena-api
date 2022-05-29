@@ -27,6 +27,13 @@ class TimeStampCreation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
+class Media(TimeStampCreation):
+    url = models.CharField(max_length=500)
+    arena = models.ForeignKey(
+        "api.Arena", on_delete=models.CASCADE, related_name="medias"
+    )
+
+
 class InformationDetails(TimeStampCreation):
     full_name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=20)
@@ -85,7 +92,6 @@ class Arena(models.Model):
     description = models.TextField()
     is_partener = models.BooleanField(default=False)
     note = models.IntegerField()
-
     adress = models.ForeignKey(Adress, on_delete=models.CASCADE)
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
 
