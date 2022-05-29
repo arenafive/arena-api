@@ -52,6 +52,10 @@ class DetailInline(admin.TabularInline):
     max_num = 1
 
 
+class MediaInline(admin.StackedInline):
+    model = Media
+
+
 @admin.register(Player)
 class PlayerAdmin(admin.ModelAdmin):
     list_display = (
@@ -127,6 +131,9 @@ class ArenaAdmin(admin.ModelAdmin):
         "is_partener",
         "description",
     )
+    inlines = [
+        MediaInline,
+    ]
 
 
 @admin.register(Game)
