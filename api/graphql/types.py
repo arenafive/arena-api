@@ -25,7 +25,6 @@ class ManagerNode(DjangoObjectType):
 class MediaNode(DjangoObjectType):
     class Meta:
         model = Media
-        interfaces = (relay.Node,)
 
 
 class ArenaNode(DjangoObjectType):
