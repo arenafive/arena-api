@@ -4,14 +4,14 @@ from graphene import ObjectType
 from graphene_django.debug import DjangoDebug
 
 from api.graphql.mutaions import UserMutaion
-from api.graphql.queries import GameQuery, PlayerQuery
+from api.graphql.queries import GameQuery, PlayerQuery, ArenaQuery
 
 
 class TestNode(ObjectType):
     key = graphene.String()
 
 
-class Query(GameQuery, PlayerQuery, ObjectType):
+class Query(ArenaQuery, GameQuery, PlayerQuery, ObjectType):
     debug = graphene.Field(DjangoDebug, name="_debug")
 
 

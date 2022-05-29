@@ -1,7 +1,7 @@
 from graphene import relay
 from graphene_django import DjangoObjectType
 
-from api.models import Game, Player, Manager
+from api.models import Game, Player, Manager, Media, Arena
 
 
 class GameNode(DjangoObjectType):
@@ -19,4 +19,16 @@ class PlayerNode(DjangoObjectType):
 class ManagerNode(DjangoObjectType):
     class Meta:
         model = Manager
+        interfaces = (relay.Node,)
+
+
+class MediaNode(DjangoObjectType):
+    class Meta:
+        model = Media
+        interfaces = (relay.Node,)
+
+
+class ArenaNode(DjangoObjectType):
+    class Meta:
+        model = Arena
         interfaces = (relay.Node,)

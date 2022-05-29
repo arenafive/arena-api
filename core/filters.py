@@ -1,6 +1,6 @@
 from django_filters import FilterSet, OrderingFilter
 
-from api.models import Game, Player
+from api.models import Game, Player, Arena
 
 
 class GameFilter(FilterSet):
@@ -19,6 +19,16 @@ class PlayerFilter(FilterSet):
         model = Player
         fields = {
             "full_name": ["exact"],
+        }
+
+    order_by = OrderingFilter(fields=("created_at",))
+
+
+class ArenaFilter(FilterSet):
+    class Meta:
+        model = Arena
+        fields = {
+            "slug": ["exact"],
         }
 
     order_by = OrderingFilter(fields=("created_at",))
