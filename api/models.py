@@ -94,6 +94,8 @@ class Arena(models.Model):
     note = models.IntegerField()
     adress = models.ForeignKey(Adress, on_delete=models.CASCADE)
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    long = models.IntegerField(default=18)
+    larg = models.IntegerField(default=12)
 
     def __str__(self):
         return f"Cité {self.slug}"
