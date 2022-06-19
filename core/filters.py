@@ -29,7 +29,7 @@ class ArenaFilter(FilterSet):
         model = Arena
         fields = {
             "slug": ["contains", "icontains"],
-            "adress__ville": ["exacte"],
+            "adress__ville": ["exact"],
         }
 
     order_by = OrderingFilter(fields=("created_at",))
