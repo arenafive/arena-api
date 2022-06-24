@@ -96,6 +96,7 @@ class Arena(models.Model):
     manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
     long = models.IntegerField(default=18)
     larg = models.IntegerField(default=12)
+    price = models.IntegerField(default=5000)
 
     def __str__(self):
         return f"Cité {self.slug}"
