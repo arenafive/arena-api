@@ -58,35 +58,6 @@ class Player(InformationDetails):
         return f"{self.full_name} : {self.email_adress}"
 
 
-class Game(models.Model):
-    GAME_CHOICES = [
-        ("5", "5 vs 5"),
-        ("6", "6 vs 6"),
-        ("7", "7 vs 7"),
-        ("8", "8 vs 8"),
-    ]
-    created_date = models.DateTimeField(auto_now_add=True)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
-    type = models.CharField(choices=GAME_CHOICES, max_length=10, default="5")
-    organised_by = models.ForeignKey(
-        Player, null=True, blank=True, on_delete=models.SET_NULL, related_name="captain"
-    )
-    players = models.ManyToManyField(Player, related_name="game")
-    score = models.CharField(max_length=20, default="NA")
-
-    def __str__(self):
-        return f"This Match is organised by {self.organised_by}"
-
-
-class StarOfTheGame(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    player = models.ForeignKey(Player, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"The man of the match is {self.player}"
-
-
 class Arena(models.Model):
     slug = models.CharField(max_length=255)
     description = models.TextField()
@@ -124,12 +95,50 @@ class Availability(models.Model):
     end_minute = models.IntegerField()
     available = models.BooleanField(default=True)
 
-    arena = models.ForeignKey(Arena, on_delete=models.CASCADE)
+    arena = models.ForeignKey(
+        Arena, on_delete=models.CASCADE, related_name="availabilities"
+    )
 
     def __str__(self):
         return (
             f"{self.start_hour}:{self.start_minute} - {self.end_hour}:{self.end_minute}"
         )
+
+
+class Game(models.Model):
+    GAME_CHOICES = [
+        ("5", "5 vs 5"),
+        ("6", "6 vs 6"),
+        ("7", "7 vs 7"),
+        ("8", "8 vs 8"),
+    ]
+    created_date = models.DateTimeField(auto_now_add=True)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    type = models.CharField(choices=GAME_CHOICES, max_length=10, default="5")
+    arena = models.ForeignKey(
+        Arena, null=True, blank=True, on_delete=models.SET_NULL, related_name="games"
+    )
+    captain = models.ForeignKey(
+        Player,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="captains",
+    )
+    players = models.ManyToManyField(Player, related_name="games")
+    score = models.CharField(max_length=20, default="NA")
+
+    def __str__(self):
+        return f"This Match is organised by {self.organised_by}"
+
+
+class StarOfTheGame(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"The man of the match is {self.player}"
 
 
 class Payment(TimeStampCreation):

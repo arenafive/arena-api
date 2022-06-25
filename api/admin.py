@@ -143,13 +143,13 @@ class GameAdmin(admin.ModelAdmin):
         "start_date",
         "end_date",
         "type",
-        "organised_by",
+        "captain",
         "attendee",
         "score",
     )
     filter_horizontal = ("players",)
     list_filter = (
-        "organised_by",
+        "captain",
         "start_date",
         "type",
     )

@@ -8,7 +8,7 @@ class GameFilter(FilterSet):
         model = Game
         fields = {
             "type": ["exact"],
-            "start_date": ["gt"],
+            "start_date": ["gte"],
         }
 
     order_by = OrderingFilter(fields=("created_date",))

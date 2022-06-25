@@ -5,12 +5,11 @@ from graphql_jwt.decorators import login_required
 
 from api.graphql.types import GameNode, PlayerNode, ArenaNode
 from api.models import Game
-from core.filters import GameFilter, PlayerFilter, ArenaFilter
 
 
 class GameQuery(ObjectType):
     game = graphene.relay.Node.Field(GameNode)
-    games = DjangoFilterConnectionField(GameNode, filterset_class=GameFilter)
+    games = DjangoFilterConnectionField(GameNode)
 
     @login_required
     def resolve_games(self, info, **kwargs):
@@ -19,9 +18,9 @@ class GameQuery(ObjectType):
 
 class PlayerQuery(ObjectType):
     player = graphene.relay.Node.Field(PlayerNode)
-    players = DjangoFilterConnectionField(PlayerNode, filterset_class=PlayerFilter)
+    players = DjangoFilterConnectionField(PlayerNode)
 
 
 class ArenaQuery(ObjectType):
     arena = graphene.relay.Node.Field(ArenaNode)
-    arenas = DjangoFilterConnectionField(ArenaNode, filterset_class=ArenaFilter)
+    arenas = DjangoFilterConnectionField(ArenaNode)
