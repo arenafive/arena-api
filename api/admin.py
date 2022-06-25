@@ -56,9 +56,8 @@ class DetailAdminMixin:
         return self.content_object(obj).email_adress
 
 
-class DetailInline(admin.TabularInline):
-    model = InformationDetails
-    max_num = 1
+class AvailabilityInline(admin.TabularInline):
+    model = Availability
 
 
 class MediaInline(admin.StackedInline):
@@ -154,6 +153,7 @@ class ArenaAdmin(admin.ModelAdmin):
     )
     inlines = [
         MediaInline,
+        AvailabilityInline,
     ]
 
     def availabilities(self, obj):
