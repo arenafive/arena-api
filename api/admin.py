@@ -7,7 +7,16 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags, format_html
 
-from api.models import Player, Manager, Arena, InformationDetails, Adress, Game, Media
+from api.models import (
+    Player,
+    Manager,
+    Arena,
+    InformationDetails,
+    Adress,
+    Game,
+    Media,
+    Availability,
+)
 
 
 class GameForm(forms.ModelForm):
@@ -67,6 +76,17 @@ class PlayerAdmin(admin.ModelAdmin):
     list_filter = ("id", "full_name", "email_adress")
 
 
+@admin.register(Availability)
+class AvailabilityAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "available_at",
+    )
+
+    def available_at(self, obj) -> str:
+        return f"{obj.day} : {obj.start_hour}h:{obj.start_minute}min - {obj.end_hour}h:{obj.end_minute}min"
+
+
 @admin.register(Media)
 class MediaAdmin(admin.ModelAdmin):
     list_display = ("id", "created_at", "updated_at", "url")
@@ -120,6 +140,7 @@ class ArenaAdmin(admin.ModelAdmin):
         "note",
         "is_partener",
         "description",
+        "availabilities",
     )
     list_filter = (
         "id",
@@ -134,6 +155,14 @@ class ArenaAdmin(admin.ModelAdmin):
     inlines = [
         MediaInline,
     ]
+
+    def availabilities(self, obj):
+        list = "<ul>"
+        for av in obj.availabilities.all():
+            list += f"<li>{strip_tags(str(av))}</li>"
+        list += "</ul>"
+
+        return format_html(list)
 
 
 @admin.register(Game)

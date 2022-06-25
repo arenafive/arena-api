@@ -20,6 +20,7 @@ class Adress(models.Model):
 
     class Meta:
         unique_together = ("ville", "quartier", "description")
+        verbose_name_plural = "Adresses"
 
 
 class TimeStampCreation(models.Model):
