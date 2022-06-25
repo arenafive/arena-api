@@ -130,7 +130,7 @@ class Game(models.Model):
     score = models.CharField(max_length=20, default="NA")
 
     def __str__(self):
-        return f"This Match is organised by {self.organised_by}"
+        return f"This Match is organised by {self.captain}"
 
 
 class StarOfTheGame(models.Model):
