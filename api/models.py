@@ -101,9 +101,7 @@ class Availability(models.Model):
     )
 
     def __str__(self):
-        return (
-            f"{self.start_hour}:{self.start_minute} - {self.end_hour}:{self.end_minute}"
-        )
+        return f"{self.day}: {self.start_hour}:{self.start_minute} - {self.end_hour}:{self.end_minute}"
 
 
 class Game(models.Model):
