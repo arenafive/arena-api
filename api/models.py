@@ -94,6 +94,7 @@ class Availability(models.Model):
     start_minute = models.IntegerField()
     end_hour = models.IntegerField()
     end_minute = models.IntegerField()
+    price = models.IntegerField(default=5000)
     available = models.BooleanField(default=True)
 
     arena = models.ForeignKey(
