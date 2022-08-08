@@ -112,6 +112,13 @@ class Game(models.Model):
         ("7", "7 vs 7"),
         ("8", "8 vs 8"),
     ]
+
+    STATUS_CHOICES = [
+        ("0", "Waiting for paiment"),
+        ("1", "Validated ✅"),
+        ("2", "Canceled ❌"),
+    ]
+
     created_date = models.DateTimeField(auto_now_add=True)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -128,9 +135,14 @@ class Game(models.Model):
     )
     players = models.ManyToManyField(Player, related_name="games")
     score = models.CharField(max_length=20, default="NA")
+    code = models.CharField(max_length=100, unique=True, blank=True)
 
-    def __str__(self):
-        return f"This Match is organised by {self.captain}"
+    status = models.CharField(choices=STATUS_CHOICES, max_length=10, default="0")
+    amount = models.IntegerField()
+
+
+def __str__(self):
+    return f"This Match is organised by {self.captain}"
 
 
 class StarOfTheGame(models.Model):

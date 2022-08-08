@@ -168,6 +168,7 @@ class ArenaAdmin(admin.ModelAdmin):
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "created_date",
         "start_date",
         "end_date",
@@ -175,12 +176,20 @@ class GameAdmin(admin.ModelAdmin):
         "captain",
         "attendee",
         "score",
+        "code",
+        "status",
+        "amount",
     )
-    filter_horizontal = ("players",)
     list_filter = (
         "captain",
         "start_date",
+        "status",
         "type",
+    )
+    readonly_fields = ("code",)
+    search_fields = (
+        "id",
+        "code",
     )
     form = GameForm
 

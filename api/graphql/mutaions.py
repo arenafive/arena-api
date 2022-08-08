@@ -1,10 +1,17 @@
+import base64
+
 import graphene
 from graphene import ClientIDMutation, ObjectType
 
 from api.graphql.types import PlayerNode, ManagerNode
+from api.models import Player, Game, Arena
 from api.services.twilio import send_sms, verify
 from api.services.user import update_or_create_player, get_user
 from django.contrib.auth import hashers
+
+
+def get_UUID_from_base64(id):
+    return base64.b64decode(id).decode().split(":")[1]
 
 
 class User(graphene.Union):
@@ -136,10 +143,35 @@ class ChangePlayerPassword(ClientIDMutation):
         return ChangePlayerPassword(created=True)
 
 
-class UserMutaion(ObjectType):
+class CreateGame(ClientIDMutation):
+    class Input:
+        amount = graphene.String()
+        arena_id = graphene.ID()
+        captain_id = graphene.ID()
+        start_date = graphene.DateTime()
+        end_date = graphene.DateTime()
+
+    code = graphene.String()
+
+    def mutate_and_get_payload(self, info, **input):
+        captain_id = input.pop("captain_id")
+        arena_id = input.pop("arena_id")
+
+        captain = Player.objects.get(pk=get_UUID_from_base64(captain_id))
+        arena = Arena.objects.get(pk=get_UUID_from_base64(arena_id))
+
+        game = Game.objects.create(arena=arena, captain=captain, **input)
+        return CreateGame(code=game.code)
+
+
+class UserMutation(ObjectType):
     sign_in = SignIn.Field()
     generate_code = GenerateCode.Field()
     verify_code = VerifyCode.Field()
     verify_user = VerifyUser.Field()
     change_player_password = ChangePlayerPassword.Field()
     create_player = CreatePlayer.Field()
+
+
+class GameMutation(ObjectType):
+    create_game = CreateGame.Field()

@@ -3,6 +3,113 @@ schema {
   mutation: Mutation
 }
 
+type AdressNode {
+  id: ID!
+  ville: String!
+  quartier: String!
+  longitude: String
+  latitude: String
+  longitudeDelta: String
+  latitudeDelta: String
+  description: String!
+  arenaSet(offset: Int, before: String, after: String, first: Int, last: Int, slug_Contains: String, slug_Icontains: String, adress_Ville: String, orderBy: String): ArenaNodeConnection!
+}
+
+type ArenaNode implements Node {
+  id: ID!
+  slug: String!
+  description: String!
+  isPartener: Boolean!
+  note: Int!
+  adress: AdressNode!
+  manager: ManagerNode!
+  long: Int!
+  larg: Int!
+  price: Int!
+  medias: [MediaNode!]!
+  availabilities(offset: Int, before: String, after: String, first: Int, last: Int, slug_Contains: String, slug_Icontains: String, adress_Ville: String, orderBy: String): AvailabilityNodeConnection!
+  games(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gte: DateTime, orderBy: String): GameNodeConnection!
+}
+
+type ArenaNodeConnection {
+  pageInfo: PageInfo!
+  edges: [ArenaNodeEdge]!
+}
+
+type ArenaNodeEdge {
+  node: ArenaNode
+  cursor: String!
+}
+
+enum AvailabilityDay {
+  LUNDI
+  MARDI
+  MERCREDI
+  JEUDI
+  VENDREDI
+  SAMEDI
+  DIMANCHE
+}
+
+type AvailabilityNode implements Node {
+  id: ID!
+  day: AvailabilityDay!
+  startHour: Int!
+  startMinute: Int!
+  endHour: Int!
+  endMinute: Int!
+  price: Int!
+  available: Boolean!
+  arena: ArenaNode!
+}
+
+type AvailabilityNodeConnection {
+  pageInfo: PageInfo!
+  edges: [AvailabilityNodeEdge]!
+}
+
+type AvailabilityNodeEdge {
+  node: AvailabilityNode
+  cursor: String!
+}
+
+input ChangePlayerPasswordInput {
+  password: String
+  phoneNumber: String
+  clientMutationId: String
+}
+
+type ChangePlayerPasswordPayload {
+  created: Boolean
+  clientMutationId: String
+}
+
+input CreateGameInput {
+  amount: String
+  arenaId: ID
+  captainId: ID
+  startDate: DateTime
+  endDate: DateTime
+  clientMutationId: String
+}
+
+type CreateGamePayload {
+  code: String
+  clientMutationId: String
+}
+
+input CreatePlayerInput {
+  fullName: String!
+  phoneNumber: String!
+  password: String!
+  clientMutationId: String
+}
+
+type CreatePlayerPayload {
+  player: PlayerNode
+  clientMutationId: String
+}
+
 scalar DateTime
 
 type DjangoDebug {
@@ -32,7 +139,13 @@ type GameNode implements Node {
   startDate: DateTime!
   endDate: DateTime!
   type: GameType!
+  arena: ArenaNode
+  captain: PlayerNode
+  players(offset: Int, before: String, after: String, first: Int, last: Int, fullName: String, orderBy: String): PlayerNodeConnection!
   score: String!
+  code: String!
+  status: GameStatus!
+  amount: Int!
 }
 
 type GameNodeConnection {
@@ -45,6 +158,12 @@ type GameNodeEdge {
   cursor: String!
 }
 
+enum GameStatus {
+  A_0
+  A_1
+  A_2
+}
+
 enum GameType {
   A_5
   A_6
@@ -52,9 +171,46 @@ enum GameType {
   A_8
 }
 
+input GenerateCodeInput {
+  phoneNumber: String
+  clientMutationId: String
+}
+
+type GenerateCodePayload {
+  verificationSid: String
+  to: String
+  clientMutationId: String
+}
+
 scalar GenericScalar
 
+type ManagerNode implements Node {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  fullName: String!
+  phoneNumber: String!
+  password: String!
+  emailAdress: String!
+  arenaSet(offset: Int, before: String, after: String, first: Int, last: Int, slug_Contains: String, slug_Icontains: String, adress_Ville: String, orderBy: String): ArenaNodeConnection!
+}
+
+type MediaNode {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  url: String!
+  arena: ArenaNode!
+}
+
 type Mutation {
+  signIn(input: SignInInput!): SignInPayload
+  generateCode(input: GenerateCodeInput!): GenerateCodePayload
+  verifyCode(input: VerifyCodeInput!): VerifyCodePayload
+  verifyUser(input: VerifyUserInput!): VerifyUserPayload
+  changePlayerPassword(input: ChangePlayerPasswordInput!): ChangePlayerPasswordPayload
+  createPlayer(input: CreatePlayerInput!): CreatePlayerPayload
+  createGame(input: CreateGameInput!): CreateGamePayload
   tokenAuth(username: String!, password: String!): ObtainJSONWebToken
   verifyToken(token: String): Verify
   refreshToken(refreshToken: String): Refresh
@@ -79,11 +235,36 @@ type PageInfo {
   endCursor: String
 }
 
+type PlayerNode implements Node {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  fullName: String!
+  phoneNumber: String!
+  password: String!
+  emailAdress: String!
+  captains(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gte: DateTime, orderBy: String): GameNodeConnection!
+  games(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gte: DateTime, orderBy: String): GameNodeConnection!
+}
+
+type PlayerNodeConnection {
+  pageInfo: PageInfo!
+  edges: [PlayerNodeEdge]!
+}
+
+type PlayerNodeEdge {
+  node: PlayerNode
+  cursor: String!
+}
+
 type Query {
+  player(id: ID!): PlayerNode
+  players(offset: Int, before: String, after: String, first: Int, last: Int, fullName: String, orderBy: String): PlayerNodeConnection
   game(id: ID!): GameNode
-  games(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gt: DateTime, orderBy: String): GameNodeConnection
+  games(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gte: DateTime, orderBy: String): GameNodeConnection
+  arena(id: ID!): ArenaNode
+  arenas(offset: Int, before: String, after: String, first: Int, last: Int, slug_Contains: String, slug_Icontains: String, adress_Ville: String, orderBy: String): ArenaNodeConnection
   _debug: DjangoDebug
-  me(look: String): [TestNode]
 }
 
 type Refresh {
@@ -93,10 +274,43 @@ type Refresh {
   refreshToken: String!
 }
 
-type TestNode {
-  key: String
+input SignInInput {
+  phoneNumber: String
+  password: String
+  clientMutationId: String
 }
+
+type SignInPayload {
+  user: User
+  clientMutationId: String
+}
+
+union User = PlayerNode | ManagerNode
 
 type Verify {
   payload: GenericScalar!
+}
+
+input VerifyCodeInput {
+  code: String
+  verificationSid: String
+  clientMutationId: String
+}
+
+type VerifyCodePayload {
+  status: String
+  valid: Boolean
+  dateCreated: DateTime
+  dateUpdated: DateTime
+  clientMutationId: String
+}
+
+input VerifyUserInput {
+  phoneNumber: String
+  clientMutationId: String
+}
+
+type VerifyUserPayload {
+  exist: Boolean
+  clientMutationId: String
 }
