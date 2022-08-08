@@ -176,7 +176,7 @@ class GameAdmin(admin.ModelAdmin):
         "captain",
         "attendee",
         "score",
-        "code",
+        "reference",
         "status",
         "amount",
     )
@@ -186,10 +186,10 @@ class GameAdmin(admin.ModelAdmin):
         "status",
         "type",
     )
-    readonly_fields = ("code",)
+    readonly_fields = ("reference",)
     search_fields = (
         "id",
-        "code",
+        "reference",
     )
     form = GameForm
 

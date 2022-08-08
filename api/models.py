@@ -135,7 +135,7 @@ class Game(models.Model):
     )
     players = models.ManyToManyField(Player, related_name="games")
     score = models.CharField(max_length=20, default="NA")
-    code = models.CharField(max_length=100, unique=True, blank=True)
+    reference = models.CharField(max_length=100, unique=True, blank=True)
 
     status = models.CharField(choices=STATUS_CHOICES, max_length=10, default="0")
     amount = models.IntegerField()

@@ -161,7 +161,7 @@ class CreateGame(ClientIDMutation):
         arena = Arena.objects.get(pk=get_UUID_from_base64(arena_id))
 
         game = Game.objects.create(arena=arena, captain=captain, **input)
-        return CreateGame(code=game.code)
+        return CreateGame(code=game.reference)
 
 
 class UserMutation(ObjectType):
