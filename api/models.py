@@ -140,9 +140,8 @@ class Game(models.Model):
     status = models.CharField(choices=STATUS_CHOICES, max_length=10, default="0")
     amount = models.IntegerField()
 
-
-def __str__(self):
-    return f"This Match is organised by {self.captain}"
+    def __str__(self):
+        return f"This Match is organised by {self.captain}"
 
 
 class StarOfTheGame(models.Model):
