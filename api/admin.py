@@ -186,7 +186,7 @@ class GameAdmin(admin.ModelAdmin):
         "status",
         "type",
     )
-    readonly_fields = ("reference",)
+    readonly_fields = ("reference", "players")
     search_fields = (
         "id",
         "reference",
