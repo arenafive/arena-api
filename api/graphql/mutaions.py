@@ -161,6 +161,7 @@ class CreateGame(ClientIDMutation):
         arena = Arena.objects.get(pk=get_UUID_from_base64(arena_id))
 
         game = Game.objects.create(arena=arena, captain=captain, **input)
+        game.players.add(captain)
         return CreateGame(code=game.reference)
 
 
