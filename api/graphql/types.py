@@ -1,3 +1,4 @@
+import graphene
 from graphene import relay
 from graphene_django import DjangoObjectType
 
@@ -13,10 +14,15 @@ class GameNode(DjangoObjectType):
 
 
 class PlayerNode(DjangoObjectType):
+    status = graphene.String()
+
     class Meta:
         model = Player
         interfaces = (relay.Node,)
         filterset_class = PlayerFilter
+
+    def resolve_status(self, info, **kwargs):
+        return self.status
 
 
 class ManagerNode(DjangoObjectType):
