@@ -165,6 +165,27 @@ class CreateGame(ClientIDMutation):
         return CreateGame(code=game.reference)
 
 
+class JoinGame(ClientIDMutation):
+    class Input:
+        code = graphene.String()
+        player_id = graphene.ID()
+
+    status = graphene.Boolean()
+
+    def mutate_and_get_payload(self, info, **input):
+        player_id = input.pop("player_id")
+        code = input.pop("code")
+
+        player = Player.objects.get(pk=get_UUID_from_base64(player_id))
+        game = Game.objects.filter(reference=code).first()
+
+        if game:
+            game.players.add(player)
+            return JoinGame(status=True)
+
+        return JoinGame(status=False)
+
+
 class UserMutation(ObjectType):
     sign_in = SignIn.Field()
     generate_code = GenerateCode.Field()
@@ -176,3 +197,4 @@ class UserMutation(ObjectType):
 
 class GameMutation(ObjectType):
     create_game = CreateGame.Field()
+    join_game = JoinGame.Field()
