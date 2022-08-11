@@ -3,7 +3,7 @@ import base64
 import graphene
 from graphene import ClientIDMutation, ObjectType
 
-from api.graphql.types import PlayerNode, ManagerNode
+from api.graphql.types import PlayerNode, ManagerNode, GameNode
 from api.models import Player, Game, Arena
 from api.services.twilio import send_sms, verify
 from api.services.user import update_or_create_player, get_user
@@ -171,6 +171,7 @@ class JoinGame(ClientIDMutation):
         player_id = graphene.ID()
 
     status = graphene.Boolean()
+    game = graphene.Field(GameNode)
 
     def mutate_and_get_payload(self, info, **input):
         player_id = input.pop("player_id")
@@ -181,9 +182,9 @@ class JoinGame(ClientIDMutation):
 
         if game:
             game.players.add(player)
-            return JoinGame(status=True)
+            return JoinGame(status=True, game=game)
 
-        return JoinGame(status=False)
+        return JoinGame(status=False, game=None)
 
 
 class UserMutation(ObjectType):
