@@ -121,7 +121,7 @@ class UpdatePlayerDetails(ClientIDMutation):
     def mutate_and_get_payload(self, info, **input):
         id = input.pop("id")
         try:
-            player = Player.objects.update_or_create(
+            player, created = Player.objects.update_or_create(
                 pk=get_UUID_from_base64(id), defaults={**input}
             )
             return UpdatePlayerDetails(player=player)
