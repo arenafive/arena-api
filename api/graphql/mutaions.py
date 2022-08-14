@@ -115,6 +115,7 @@ class UpdatePlayerDetails(ClientIDMutation):
         phone_number = graphene.String(required=False)
         email_adress = graphene.String(required=False)
         password = graphene.String(required=False)
+        profile = graphene.String(required=False)
 
     player = graphene.Field(PlayerNode)
 

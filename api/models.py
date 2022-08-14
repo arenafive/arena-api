@@ -40,6 +40,7 @@ class InformationDetails(TimeStampCreation):
     phone_number = models.CharField(max_length=20)
     password = models.CharField(max_length=1000)
     email_adress = models.EmailField(blank=True)
+    profile = models.CharField(max_length=5000, null=True, blank=True)
 
     class Meta:
         abstract = True
