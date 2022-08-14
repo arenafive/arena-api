@@ -108,6 +108,28 @@ class CreatePlayer(ClientIDMutation):
         raise Exception("Ce numero est deja associé à un compte !")
 
 
+class UpdatePlayerDetails(ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True)
+        full_name = graphene.String(required=False)
+        phone_number = graphene.String(required=False)
+        email_adress = graphene.String(required=False)
+        password = graphene.String(required=False)
+
+    player = graphene.Field(PlayerNode)
+
+    def mutate_and_get_payload(self, info, **input):
+        id = input.pop("id")
+        try:
+            player = Player.objects.update_or_create(
+                pk=get_UUID_from_base64(id), defaults={**input}
+            )
+            return UpdatePlayerDetails(player=player)
+
+        except Exception as e:
+            raise e
+
+
 class VerifyUser(ClientIDMutation):
     class Input:
         phone_number = graphene.String()
@@ -194,6 +216,7 @@ class UserMutation(ObjectType):
     verify_user = VerifyUser.Field()
     change_player_password = ChangePlayerPassword.Field()
     create_player = CreatePlayer.Field()
+    update_player_details = UpdatePlayerDetails.Field()
 
 
 class GameMutation(ObjectType):
