@@ -34,10 +34,7 @@ class SignIn(ClientIDMutation):
         password = input.get("password")
         hashed_password = hashers.make_password(password=password)
         try:
-
-            user = get_user(phone_number=phone_number)
-            if not hashers.check_password(password=password, encoded=hashed_password):
-                raise Exception("error")
+            user = get_user(phone_number=phone_number, password=hashed_password)
         except Exception:
             raise Exception("Numero ou mot de passe incorrect !")
 
