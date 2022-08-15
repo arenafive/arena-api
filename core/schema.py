@@ -3,7 +3,7 @@ import graphql_jwt
 from graphene import ObjectType
 from graphene_django.debug import DjangoDebug
 
-from api.graphql.mutaions import UserMutation, GameMutation
+from api.graphql.mutations import UserMutation, GameMutation
 from api.graphql.queries import GameQuery, PlayerQuery, ArenaQuery
 
 
