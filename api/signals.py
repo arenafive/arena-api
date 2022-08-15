@@ -34,6 +34,7 @@ def game_generate_ref(sender, instance, created, **kwargs):
     sender=Manager,
 )
 def hash_password(sender, instance, created, **kwargs):
-    hashed_password = hashers.make_password(password=instance.password)
-    instance.password = hashed_password
-    instance.save()
+    if created:
+        hashed_password = hashers.make_password(password=instance.password)
+        instance.password = hashed_password
+        instance.save()
