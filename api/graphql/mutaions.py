@@ -32,9 +32,11 @@ class SignIn(ClientIDMutation):
     def mutate_and_get_payload(self, info, **input):
         phone_number = input.get("phone_number")
         password = input.get("password")
-        hashed_password = hashers.make_password(password=password)
         try:
-            user = get_user(phone_number=phone_number, password=hashed_password)
+
+            user = get_user(phone_number=phone_number)
+            if not hashers.check_password(password=password, encoded=user.password):
+                raise Exception("error")
         except Exception:
             raise Exception("Numero ou mot de passe incorrect !")
 
