@@ -3,7 +3,7 @@ from graphene import ObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql_jwt.decorators import login_required
 
-from api.graphql.types import GameNode, PlayerNode, ArenaNode
+from api.graphql.types import GameNode, PlayerNode, ArenaNode, ManagerNode
 from api.models import Game
 
 
@@ -19,6 +19,11 @@ class GameQuery(ObjectType):
 class PlayerQuery(ObjectType):
     player = graphene.relay.Node.Field(PlayerNode)
     players = DjangoFilterConnectionField(PlayerNode)
+
+
+class ManagerQuery(ObjectType):
+    manager = graphene.relay.Node.Field(ManagerNode)
+    managers = DjangoFilterConnectionField(ManagerNode)
 
 
 class ArenaQuery(ObjectType):
