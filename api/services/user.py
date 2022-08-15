@@ -12,13 +12,13 @@ def update_or_create_manager(**kwargs):
 def get_user(**kwargs):
     user = None
     try:
-        user = Player.objects.get(kwargs)
+        user = Player.objects.get(**kwargs)
     except Player.DoesNotExist:
         pass
 
     if user is None:
         try:
-            user = Manager.objects.get(kwargs)
+            user = Manager.objects.get(**kwargs)
         except Manager.DoesNotExist:
             raise Exception("error")
     return user
