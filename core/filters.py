@@ -6,10 +6,7 @@ from api.models import Game, Player, Arena, Manager
 class GameFilter(FilterSet):
     class Meta:
         model = Game
-        fields = {
-            "type": ["exact"],
-            "start_date": ["gte"],
-        }
+        fields = {"type": ["exact"], "start_date": ["gte"], "arena__manager": ["exact"]}
 
     order_by = OrderingFilter(fields=("created_date",))
 
