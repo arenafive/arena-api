@@ -1,19 +1,19 @@
 import graphene
 from graphene import ObjectType
 from graphene_django.filter import DjangoFilterConnectionField
-from graphql_jwt.decorators import login_required
+
+# from graphql_jwt.decorators import login_required
 
 from api.graphql.types import GameNode, PlayerNode, ArenaNode, ManagerNode
-from api.models import Game
 
 
 class GameQuery(ObjectType):
     game = graphene.relay.Node.Field(GameNode)
     games = DjangoFilterConnectionField(GameNode)
 
-    @login_required
-    def resolve_games(self, info, **kwargs):
-        return Game.objects.all()
+    # @login_required
+    """def resolve_games(self, info, **kwargs):
+        return Game.objects.all()"""
 
 
 class PlayerQuery(ObjectType):
