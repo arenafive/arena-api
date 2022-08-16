@@ -32,6 +32,7 @@ env = environ.Env(
     TWILIO_ACCOUNT_SID=(str, ""),
     TWILIO_AUTH_TOKEN=(str, ""),
     TWILIO_SERVICE=(str, ""),
+    DEBUG=(bool, False),
 )
 
 env.read_env(os.path.join(BASE_DIR, ".env"), overwrite=True)
@@ -43,7 +44,7 @@ env.read_env(os.path.join(BASE_DIR, ".env"), overwrite=True)
 SECRET_KEY = "django-insecure-(w^-!6)89)aq^l7@*dv8x=nn$m$@_r-qov^o3ae0mvi)7i-ex&"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", env("DEBUG"))
 
 ALLOWED_HOSTS = json.loads(os.getenv("ALLOWED_HOSTS", env("ALLOWED_HOSTS")))
 
