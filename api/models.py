@@ -66,7 +66,9 @@ class Arena(models.Model):
     is_partener = models.BooleanField(default=False)
     note = models.IntegerField()
     adress = models.ForeignKey(Adress, on_delete=models.CASCADE)
-    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    manager = models.ForeignKey(
+        Manager, on_delete=models.CASCADE, related_name="arenas"
+    )
     long = models.IntegerField(default=18)
     larg = models.IntegerField(default=12)
     price = models.IntegerField(default=5000)
