@@ -182,6 +182,12 @@ class CreateGame(ClientIDMutation):
         captain = Player.objects.get(pk=get_UUID_from_base64(captain_id))
         arena = Arena.objects.get(pk=get_UUID_from_base64(arena_id))
 
+        game = Game.objects.filter(
+            start_date=input.get("start_date"), end_date=input.get("end_date")
+        )
+        if game:
+            return CreateGame(code=-1)
+
         game = Game.objects.create(arena=arena, captain=captain, **input)
         game.players.add(captain)
         return CreateGame(code=game.reference)

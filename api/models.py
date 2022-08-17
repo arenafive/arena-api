@@ -140,9 +140,14 @@ class Game(models.Model):
 
     status = models.CharField(choices=STATUS_CHOICES, max_length=10, default="0")
     amount = models.IntegerField()
+    blocked = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"This Match is organised by {self.captain}"
+        return (
+            f"This Match is organised by {self.captain}"
+            if not self.blocked
+            else f"This Match is organised by {self.arena.manager.full_name}"
+        )
 
 
 class StarOfTheGame(models.Model):
