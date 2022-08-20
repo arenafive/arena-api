@@ -172,14 +172,16 @@ class CreateGame(ClientIDMutation):
         captain_id = graphene.ID()
         start_date = graphene.DateTime()
         end_date = graphene.DateTime()
+        blocked = graphene.Boolean()
 
     code = graphene.String()
 
     def mutate_and_get_payload(self, info, **input):
-        captain_id = input.pop("captain_id")
+        captain_id = input.pop("captain_id", None)
         arena_id = input.pop("arena_id")
-
-        captain = Player.objects.get(pk=get_UUID_from_base64(captain_id))
+        captain = None
+        if captain_id:
+            captain = Player.objects.get(pk=get_UUID_from_base64(captain_id))
         arena = Arena.objects.get(pk=get_UUID_from_base64(arena_id))
 
         game = Game.objects.filter(
