@@ -191,7 +191,8 @@ class CreateGame(ClientIDMutation):
             return CreateGame(code=-1)
 
         game = Game.objects.create(arena=arena, captain=captain, **input)
-        game.players.add(captain)
+        if captain:
+            game.players.add(captain)
         return CreateGame(code=game.reference)
 
 
