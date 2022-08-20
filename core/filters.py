@@ -13,7 +13,7 @@ class GameFilter(FilterSet):
             "blocked": ["exact"],
         }
 
-    order_by = OrderingFilter(fields=("created_date",))
+    order_by = OrderingFilter(fields=("created_date", "start_date"))
 
 
 class PlayerFilter(FilterSet):
