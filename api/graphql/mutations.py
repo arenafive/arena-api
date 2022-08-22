@@ -26,10 +26,12 @@ class SignIn(ClientIDMutation):
     class Input:
         phone_number = graphene.String()
         password = graphene.String()
+        token = graphene.String(required=True)
 
     user = graphene.Field(User)
 
     def mutate_and_get_payload(self, info, **input):
+        input.pop("token")
         phone_number = input.get("phone_number")
         password = input.get("password")
         try:
@@ -46,6 +48,7 @@ class SignIn(ClientIDMutation):
 class GenerateCode(ClientIDMutation):
     class Input:
         phone_number = graphene.String()
+        token = graphene.String(required=True)
 
     verification_sid = graphene.String()
     to = graphene.String()
@@ -59,6 +62,7 @@ class VerifyCode(ClientIDMutation):
     class Input:
         code = graphene.String()
         verification_sid = graphene.String()
+        token = graphene.String(required=True)
 
     status = graphene.String()
     valid = graphene.Boolean()
@@ -82,10 +86,12 @@ class CreatePlayer(ClientIDMutation):
         full_name = graphene.String(required=True)
         phone_number = graphene.String(required=True)
         password = graphene.String(required=True)
+        token = graphene.String(required=True)
 
     player = graphene.Field(PlayerNode)
 
     def mutate_and_get_payload(self, info, **input):
+        input.pop("token")
         password = input.get("password")
         phone_number = input.get("phone_number")
         user = None
@@ -115,10 +121,12 @@ class UpdatePlayerDetails(ClientIDMutation):
         email_adress = graphene.String(required=False)
         password = graphene.String(required=False)
         profile = graphene.String(required=False)
+        token = graphene.String(required=True)
 
     player = graphene.Field(PlayerNode)
 
     def mutate_and_get_payload(self, info, **input):
+        input.pop("token")
         id = input.pop("id")
         try:
             player, created = Player.objects.update_or_create(
@@ -133,11 +141,11 @@ class UpdatePlayerDetails(ClientIDMutation):
 class VerifyUser(ClientIDMutation):
     class Input:
         phone_number = graphene.String()
+        token = graphene.String(required=True)
 
     exist = graphene.Boolean()
 
     def mutate_and_get_payload(self, info, **input):
-
         phone_number = input.get("phone_number")
         try:
             get_user(phone_number=phone_number)
@@ -150,6 +158,7 @@ class ChangePlayerPassword(ClientIDMutation):
     class Input:
         password = graphene.String()
         phone_number = graphene.String()
+        token = graphene.String(required=True)
 
     created = graphene.Boolean()
 
@@ -173,10 +182,12 @@ class CreateGame(ClientIDMutation):
         start_date = graphene.DateTime()
         end_date = graphene.DateTime()
         blocked = graphene.Boolean()
+        token = graphene.String(required=True)
 
     code = graphene.String()
 
     def mutate_and_get_payload(self, info, **input):
+        input.pop("token")
         captain_id = input.pop("captain_id", None)
         arena_id = input.pop("arena_id")
         captain = None
@@ -200,6 +211,7 @@ class JoinGame(ClientIDMutation):
     class Input:
         code = graphene.String()
         player_id = graphene.ID()
+        token = graphene.String(required=True)
 
     status = graphene.Boolean()
     game = graphene.Field(GameNode)

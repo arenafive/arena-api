@@ -1,7 +1,16 @@
 from graphene import relay
 from graphene_django import DjangoObjectType
 
-from api.models import Game, Player, Manager, Media, Arena, Adress, Availability
+from api.models import (
+    Game,
+    Player,
+    Manager,
+    Media,
+    Arena,
+    Adress,
+    Availability,
+    ArenaFiveSettings,
+)
 from core.filters import GameFilter, PlayerFilter, ArenaFilter, ManagerFilter
 
 
@@ -49,3 +58,8 @@ class AvailabilityNode(DjangoObjectType):
         model = Availability
         interfaces = (relay.Node,)
         filterset_class = ArenaFilter
+
+
+class ArenaFiveSettingsNode(DjangoObjectType):
+    class Meta:
+        model = ArenaFiveSettings
