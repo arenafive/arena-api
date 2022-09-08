@@ -268,6 +268,47 @@ class PaymentGameAdmin(admin.ModelAdmin):
     p.allow_tags = True
     p.short_description = "Payment"
 
+    def payment(self, obj):
+        return obj.paymentgame_set.first()
+
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ("id", "created_at", "updated_at", "amount", "phone_number")
+
+
+@admin.register(BankilyPayment)
+class BankilyPaymentAdmin(admin.ModelAdmin):
+    list_display = ("transaction_id", "payment")
+    search_fields = (
+        "id",
+        "transaction_id",
+    )
+    list_display_links = ("transaction_id",)
+
+    def payment(self, obj):
+        return obj.payment.first()
+
+
+@admin.register(PaymentGame)
+class PaymentGameAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "p",
+        "game",
+        "player",
+        "to_be_refund",
+        "refunded",
+    )
+    search_fields = ("id",)
+
+    def p(self, obj):
+        url = resolve_url(admin_urlname(obj.payment._meta, "change"), obj.payment.pk)
+        return format_html('<a href="%s">%s</a>' % (url, obj.payment))
+
+    p.allow_tags = True
+    p.short_description = "Payment"
+
 
 @admin.register(ArenaFiveSettings)
 class ArenaFiveSettingsAdmin(admin.ModelAdmin):
