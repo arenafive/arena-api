@@ -82,7 +82,11 @@ class AvailabilityAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "available_at",
+        "price",
+        "arena",
     )
+
+    list_filter = ("arena",)
 
     def available_at(self, obj) -> str:
         return f"{obj.day} : {obj.start_hour}h:{obj.start_minute}min - {obj.end_hour}h:{obj.end_minute}min"
@@ -153,9 +157,9 @@ class ArenaAdmin(admin.ModelAdmin):
         "description",
         "availabilities",
     )
+    readonly_fields = ("availabilities",)
     inlines = [
         MediaInline,
-        AvailabilityInline,
     ]
     actions = ("generate_availabilities_",)
 
