@@ -134,6 +134,7 @@ GRAPHENE = {
         "graphql_jwt.middleware.JSONWebTokenMiddleware",
         "graphene_django.debug.DjangoDebugMiddleware",
     ],
+    "RELAY_CONNECTION_MAX_LIMIT": 500,
 }
 
 # GRAPHQL_JWT SETTINGS
