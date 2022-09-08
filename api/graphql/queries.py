@@ -41,7 +41,9 @@ class ArenaQuery(ObjectType):
 
 
 class ArenaFiveSettingsQuery(ObjectType):
-    settings = graphene.Field(ArenaFiveSettingsNode, graphene.String(required=True))
+    settings = graphene.Field(
+        ArenaFiveSettingsNode, token=graphene.String(required=True)
+    )
 
     @login_required
     def resolve_settings(self, info):
