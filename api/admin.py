@@ -16,6 +16,7 @@ from api.models import (
     Game,
     Media,
     Availability,
+    ArenaFiveSettings,
 )
 
 
@@ -200,6 +201,22 @@ class GameAdmin(admin.ModelAdmin):
         list += "</ul>"
 
         return format_html(list)
+
+
+@admin.register(ArenaFiveSettings)
+class ArenaFiveSettingsAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "portable",
+        "fix_number",
+        "bankily_number",
+        "maservi_number",
+        "twitter_link",
+        "facebook_link",
+        "whatsapp_number",
+        "created_at",
+        "updated_at",
+    )
 
 
 admin.site.site_header = "ARENA Administration"
