@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 
 # Register your models here.
 # from django.contrib.contenttypes.admin import GenericTabularInline
@@ -18,6 +18,7 @@ from api.models import (
     Availability,
     ArenaFiveSettings,
 )
+from api.scripts import generate_availabilities
 
 
 class GameForm(forms.ModelForm):
@@ -140,7 +141,6 @@ class ArenaAdmin(admin.ModelAdmin):
         "note",
         "is_partener",
         "description",
-        "availabilities",
     )
     list_filter = (
         "id",
@@ -151,11 +151,22 @@ class ArenaAdmin(admin.ModelAdmin):
         "note",
         "is_partener",
         "description",
+        "availabilities",
     )
     inlines = [
         MediaInline,
         AvailabilityInline,
     ]
+    actions = ("generate_availabilities_",)
+
+    @admin.action(description="generer des disponiblités")
+    def generate_availabilities_(self, request, queryset):
+        count = generate_availabilities(queryset)
+        self.message_user(
+            request=request,
+            level=messages.INFO,
+            message=f"des disponibiltés ont/a été créée(s) pour {count} cités",
+        )
 
     def availabilities(self, obj):
         list = "<ul>"
