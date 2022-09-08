@@ -169,12 +169,16 @@ class Payment(TimeStampCreation):
     amount = models.IntegerField()
     phone_number = models.CharField(max_length=20)
 
+    def __str__(self):
+        return f"{self.content_type} | {self.id}"
+
 
 class BankilyPayment(models.Model):
     payment = GenericRelation(Payment)
+    transaction_id = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
-        return "By Bankily"
+        return self.transaction_id
 
 
 class MasrviPayment(models.Model):
@@ -193,14 +197,15 @@ class StripePayment(models.Model):
 
 
 class PaymentGame(models.Model):
-    payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
+    payment = models.ForeignKey(
+        Payment, on_delete=models.CASCADE, related_name="payment"
+    )
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     to_be_refund = models.BooleanField(default=False)
     refunded = models.BooleanField(default=False)
 
-    @property
-    def slug(self):
+    def __str__(self):
         return f"paiment of {self.player} by {self.payment}"
 
 
