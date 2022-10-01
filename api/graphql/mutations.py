@@ -138,6 +138,29 @@ class UpdatePlayerDetails(ClientIDMutation):
             raise e
 
 
+class DeleteUserAccount(ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True)
+        token = graphene.String(required=True)
+
+    status_code = graphene.String()
+    message = graphene.String()
+
+    def mutate_and_get_payload(self, info, **input):
+        status_code = "1"
+        message = "success"
+
+        input.pop("token")
+        id = input.pop("id")
+        try:
+            player = Player.objects.get(pk=get_UUID_from_base64(id))
+            player.delete()
+        except Exception as e:
+            status_code = 0
+            message = e
+        return DeleteUserAccount(status_code=status_code, message=message)
+
+
 class VerifyUser(ClientIDMutation):
     class Input:
         phone_number = graphene.String()
@@ -238,6 +261,7 @@ class UserMutation(ObjectType):
     change_player_password = ChangePlayerPassword.Field()
     create_player = CreatePlayer.Field()
     update_player_details = UpdatePlayerDetails.Field()
+    delete_user_account = DeleteUserAccount.Field()
 
 
 class GameMutation(ObjectType):
