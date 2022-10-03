@@ -80,7 +80,8 @@ class PlayerAdmin(admin.ModelAdmin):
         "phone_number",
         "email_adress",
     )
-    list_filter = ("id", "full_name", "email_adress")
+    list_filter = ("id", "full_name", "email_adress", "phone_number")
+    search_fields = ("id", "full_name", "email_adress", "phone_number")
 
 
 @admin.register(Availability)
@@ -235,11 +236,8 @@ class PaymentAdmin(admin.ModelAdmin):
 
 @admin.register(BankilyPayment)
 class BankilyPaymentAdmin(admin.ModelAdmin):
-    list_display = ("transaction_id", "payment")
-    search_fields = (
-        "id",
-        "transaction_id",
-    )
+    list_display = ("transaction_id", "operation_id", "payment")
+    search_fields = ("id", "transaction_id", "operation_id")
     list_display_links = ("transaction_id",)
 
     def payment(self, obj):
@@ -256,7 +254,12 @@ class PaymentGameAdmin(admin.ModelAdmin):
         "to_be_refund",
         "refunded",
     )
-    search_fields = ("id",)
+    search_fields = (
+        "id",
+        "player__full_name",
+        "player__email_adress",
+        "player__phone_number",
+    )
 
     def p(self, obj):
         url = resolve_url(admin_urlname(obj.payment._meta, "change"), obj.payment.pk)

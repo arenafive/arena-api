@@ -201,6 +201,9 @@ class ChangePlayerPassword(ClientIDMutation):
 class CreateGame(ClientIDMutation):
     class Input:
         amount = graphene.String()
+        client_phone = graphene.String()
+        passcode = graphene.String()
+        language = graphene.String()
         arena_id = graphene.ID()
         captain_id = graphene.ID()
         start_date = graphene.DateTime()
@@ -210,7 +213,7 @@ class CreateGame(ClientIDMutation):
 
     code = graphene.String()
     transactionId = graphene.String()
-    errorCode = (graphene.Int(),)
+    errorCode = graphene.Int()
     errorMessage = graphene.String()
 
     def mutate_and_get_payload(self, info, **input):
@@ -239,7 +242,9 @@ class CreateGame(ClientIDMutation):
         res = pay_service.pay(**params)
 
         if res["errorCode"] == 0:
-            p = BankilyPayment.objects.create(transaction_id=res["transactionId"])
+            p = BankilyPayment.objects.create(
+                transaction_id=res["transactionId"], operation_id=params["operationId"]
+            )
             payment = p.payment.create(
                 amount=params.get("amount"), phone_number=params.get("clientPhone")
             )
@@ -253,7 +258,7 @@ class CreateGame(ClientIDMutation):
             game = Game.objects.create(arena=arena, captain=captain, **input)
             if captain:
                 game.players.add(captain)
-            PaymentGame.object.create(payment=payment, game=game, player=captain)
+            PaymentGame.objects.create(payment=payment, game=game, player=captain)
         return CreateGame(code=game.reference, **res)
 
 

@@ -214,6 +214,9 @@ JAZZMIN_SETTINGS = {
         "api.manager": "fas fa-users",
         "api.media": "fas fa-photo-video",
         "api.player": "fas fa-user-friends",
+        "api.payment": "fas fad fa-credit-card",
+        "api.paymentgame": "fas fad fa-credit-card",
+        "api.bankilypayment": "fas fa-money-check-alt",
     },
     # Icons that are used when one is not manually specified
     "default_icon_parents": "fas far fa-key",

@@ -36,5 +36,5 @@ class BankilyPaymentService:
 def generate_operation_id():
     while True:
         code = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
-        if BankilyPayment.objects.filter(reference=code).count() == 0:
+        if BankilyPayment.objects.filter(operation_id=code).count() == 0:
             return code

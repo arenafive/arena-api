@@ -174,6 +174,7 @@ class Payment(TimeStampCreation):
 
 
 class BankilyPayment(models.Model):
+    operation_id = models.CharField(max_length=200, blank=True, null=True)
     payment = GenericRelation(Payment)
     transaction_id = models.CharField(max_length=200, blank=True, null=True)
 
