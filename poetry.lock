@@ -166,6 +166,17 @@ python-versions = ">=3.6.2"
 django = ">=2.2"
 
 [[package]]
+name = "django-modeltranslation"
+version = "0.18.4"
+description = "Translates Django models using a registration approach."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Django = ">=3.2"
+
+[[package]]
 name = "factory-boy"
 version = "3.2.1"
 description = "A versatile test fixtures replacement based on thoughtbot's factory_bot for Ruby."
@@ -583,7 +594,7 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "acc0daa80990be7ac76d7a82c5adbde49728fe54a0fdee70154e3201334962ad"
+content-hash = "5182635434712ba31ad5b2f3dca7bf20d536aa2d889f34b8edc210445d2faec9"
 
 [metadata.files]
 aniso8601 = [
@@ -662,6 +673,10 @@ django-graphql-jwt = [
 django-jazzmin = [
     {file = "django-jazzmin-2.5.0.tar.gz", hash = "sha256:2ee5ea548e9d5d6cf6495025d006b063ecae84702304eb90c9c5ef37ba99078a"},
     {file = "django_jazzmin-2.5.0-py3-none-any.whl", hash = "sha256:6b9f9951eee41f60793a0d2f6f3d57213bd5605ddda7a106acb2bcdec4ef124e"},
+]
+django-modeltranslation = [
+    {file = "django-modeltranslation-0.18.4.tar.gz", hash = "sha256:f4b6755248a7c6ff121b8e2a3e5ece47d3b47f4350f09b570cdf15d0af4b6939"},
+    {file = "django_modeltranslation-0.18.4-py3-none-any.whl", hash = "sha256:756de996c44919108926b9d442e2f119e39a860f7295d6a1bdad7327a5d769c6"},
 ]
 factory-boy = [
     {file = "factory_boy-3.2.1-py2.py3-none-any.whl", hash = "sha256:eb02a7dd1b577ef606b75a253b9818e6f9eaf996d94449c9d5ebb124f90dc795"},

@@ -6,6 +6,7 @@ from django.contrib import admin, messages
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags, format_html
+from modeltranslation.admin import TranslationAdmin
 
 from api.models import (
     Player,
@@ -117,7 +118,7 @@ class ManagerAdmin(admin.ModelAdmin, DetailAdminMixin):
 
 
 @admin.register(Adress)
-class AdressAdmin(admin.ModelAdmin):
+class AdressAdmin(TranslationAdmin, admin.ModelAdmin):
     list_display = (
         "id",
         "ville",
@@ -136,7 +137,7 @@ class AdressAdmin(admin.ModelAdmin):
 
 
 @admin.register(Arena)
-class ArenaAdmin(admin.ModelAdmin):
+class ArenaAdmin(TranslationAdmin, admin.ModelAdmin):
     list_display = (
         "id",
         "slug",

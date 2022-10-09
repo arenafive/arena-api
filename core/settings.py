@@ -57,6 +57,7 @@ TWILIO_SERVICE = os.getenv("TWILIO_SERVICE", env("TWILIO_SERVICE"))
 
 INSTALLED_APPS = [
     "jazzmin",
+    "modeltranslation",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -208,3 +209,6 @@ JAZZMIN_SETTINGS = {
     "default_icon_parents": "fas far fa-key",
     "default_icon_children": "fas fa-key",
 }
+
+MODELTRANSLATION_LANGUAGES = ("fr", "ar")
+MODELTRANSLATION_DEFAULT_LANGUAGE = "fr"
