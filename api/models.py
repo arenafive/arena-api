@@ -41,6 +41,7 @@ class InformationDetails(TimeStampCreation):
     password = models.CharField(max_length=1000)
     email_adress = models.EmailField(blank=True)
     profile = models.CharField(max_length=5000, null=True, blank=True)
+    exponent_push_token = models.CharField(max_length=5000, null=True, blank=True)
 
     class Meta:
         abstract = True
