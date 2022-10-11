@@ -208,6 +208,7 @@ class ArenaFiveSettings(TimeStampCreation):
     portable = models.CharField(max_length=20, blank=True, null=True)
     fix_number = models.CharField(max_length=20, blank=True, null=True)
     bankily_number = models.CharField(max_length=20, blank=True, null=True)
+    bankily_merchant_id = models.CharField(max_length=20, blank=True, null=True)
     maservi_number = models.CharField(max_length=20, blank=True, null=True)
     twitter_link = models.CharField(max_length=500, blank=True, null=True)
     facebook_link = models.CharField(max_length=500, blank=True, null=True)
