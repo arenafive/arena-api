@@ -32,6 +32,10 @@ env = environ.Env(
     TWILIO_ACCOUNT_SID=(str, ""),
     TWILIO_AUTH_TOKEN=(str, ""),
     TWILIO_SERVICE=(str, ""),
+    BANKILY_ENDPOINT=(str, ""),
+    BANKILY_CLIENT_ID=(str, ""),
+    BANKILY_USERNAME=(str, ""),
+    BANKILY_PASSWORD=(str, ""),
     DEBUG=(bool, False),
 )
 
@@ -52,6 +56,12 @@ ALLOWED_HOSTS = json.loads(os.getenv("ALLOWED_HOSTS", env("ALLOWED_HOSTS")))
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", env("TWILIO_ACCOUNT_SID"))
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", env("TWILIO_AUTH_TOKEN"))
 TWILIO_SERVICE = os.getenv("TWILIO_SERVICE", env("TWILIO_SERVICE"))
+
+# BANKILY SETTINGS
+BANKILY_ENDPOINT = os.getenv("BANKILY_ENDPOINT", env("BANKILY_ENDPOINT"))
+BANKILY_CLIENT_ID = os.getenv("BANKILY_CLIENT_ID", env("BANKILY_CLIENT_ID"))
+BANKILY_USERNAME = os.getenv("BANKILY_USERNAME", env("BANKILY_USERNAME"))
+BANKILY_PASSWORD = os.getenv("BANKILY_PASSWORD", env("BANKILY_PASSWORD"))
 
 # Application definition
 
@@ -204,6 +214,9 @@ JAZZMIN_SETTINGS = {
         "api.manager": "fas fa-users",
         "api.media": "fas fa-photo-video",
         "api.player": "fas fa-user-friends",
+        "api.payment": "fas fad fa-credit-card",
+        "api.paymentgame": "fas fad fa-credit-card",
+        "api.bankilypayment": "fas fa-money-check-alt",
     },
     # Icons that are used when one is not manually specified
     "default_icon_parents": "fas far fa-key",

@@ -15,6 +15,19 @@ type AdressNode {
   arenaSet(offset: Int, before: String, after: String, first: Int, last: Int, slug_Contains: String, slug_Icontains: String, adress_Ville: String, orderBy: String): ArenaNodeConnection!
 }
 
+type ArenaFiveSettingsNode {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  portable: String
+  fixNumber: String
+  bankilyNumber: String
+  maserviNumber: String
+  twitterLink: String
+  facebookLink: String
+  whatsappNumber: String
+}
+
 type ArenaNode implements Node {
   id: ID!
   slug: String!
@@ -28,7 +41,7 @@ type ArenaNode implements Node {
   price: Int!
   medias: [MediaNode!]!
   availabilities(offset: Int, before: String, after: String, first: Int, last: Int, slug_Contains: String, slug_Icontains: String, adress_Ville: String, orderBy: String): AvailabilityNodeConnection!
-  games(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gte: DateTime, orderBy: String): GameNodeConnection!
+  games(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gte: DateTime, arena_Manager: ID, blocked: Boolean, orderBy: String): GameNodeConnection!
 }
 
 type ArenaNodeConnection {
@@ -76,6 +89,7 @@ type AvailabilityNodeEdge {
 input ChangePlayerPasswordInput {
   password: String
   phoneNumber: String
+  token: String!
   clientMutationId: String
 }
 
@@ -90,11 +104,15 @@ input CreateGameInput {
   captainId: ID
   startDate: DateTime
   endDate: DateTime
+  blocked: Boolean
+  token: String!
   clientMutationId: String
 }
 
 type CreateGamePayload {
   code: String
+  transactionId: String
+  errorMessage: String
   clientMutationId: String
 }
 
@@ -102,6 +120,7 @@ input CreatePlayerInput {
   fullName: String!
   phoneNumber: String!
   password: String!
+  token: String!
   clientMutationId: String
 }
 
@@ -111,6 +130,18 @@ type CreatePlayerPayload {
 }
 
 scalar DateTime
+
+input DeleteUserAccountInput {
+  id: ID!
+  token: String!
+  clientMutationId: String
+}
+
+type DeleteUserAccountPayload {
+  statusCode: String
+  message: String
+  clientMutationId: String
+}
 
 type DjangoDebug {
   sql: [DjangoDebugSQL]
@@ -138,14 +169,15 @@ type GameNode implements Node {
   createdDate: DateTime!
   startDate: DateTime!
   endDate: DateTime!
-  type: GameType!
+  type: String!
   arena: ArenaNode
   captain: PlayerNode
   players(offset: Int, before: String, after: String, first: Int, last: Int, fullName: String, orderBy: String): PlayerNodeConnection!
   score: String!
-  code: String!
-  status: GameStatus!
+  reference: String
+  status: String!
   amount: Int!
+  blocked: Boolean!
 }
 
 type GameNodeConnection {
@@ -158,21 +190,9 @@ type GameNodeEdge {
   cursor: String!
 }
 
-enum GameStatus {
-  A_0
-  A_1
-  A_2
-}
-
-enum GameType {
-  A_5
-  A_6
-  A_7
-  A_8
-}
-
 input GenerateCodeInput {
   phoneNumber: String
+  token: String!
   clientMutationId: String
 }
 
@@ -184,6 +204,19 @@ type GenerateCodePayload {
 
 scalar GenericScalar
 
+input JoinGameInput {
+  code: String
+  playerId: ID
+  token: String!
+  clientMutationId: String
+}
+
+type JoinGamePayload {
+  status: Boolean
+  game: GameNode
+  clientMutationId: String
+}
+
 type ManagerNode implements Node {
   id: ID!
   createdAt: DateTime!
@@ -192,7 +225,18 @@ type ManagerNode implements Node {
   phoneNumber: String!
   password: String!
   emailAdress: String!
-  arenaSet(offset: Int, before: String, after: String, first: Int, last: Int, slug_Contains: String, slug_Icontains: String, adress_Ville: String, orderBy: String): ArenaNodeConnection!
+  profile: String
+  arenas(offset: Int, before: String, after: String, first: Int, last: Int, slug_Contains: String, slug_Icontains: String, adress_Ville: String, orderBy: String): ArenaNodeConnection!
+}
+
+type ManagerNodeConnection {
+  pageInfo: PageInfo!
+  edges: [ManagerNodeEdge]!
+}
+
+type ManagerNodeEdge {
+  node: ManagerNode
+  cursor: String!
 }
 
 type MediaNode {
@@ -210,7 +254,10 @@ type Mutation {
   verifyUser(input: VerifyUserInput!): VerifyUserPayload
   changePlayerPassword(input: ChangePlayerPasswordInput!): ChangePlayerPasswordPayload
   createPlayer(input: CreatePlayerInput!): CreatePlayerPayload
+  updatePlayerDetails(input: UpdatePlayerDetailsInput!): UpdatePlayerDetailsPayload
+  deleteUserAccount(input: DeleteUserAccountInput!): DeleteUserAccountPayload
   createGame(input: CreateGameInput!): CreateGamePayload
+  joinGame(input: JoinGameInput!): JoinGamePayload
   tokenAuth(username: String!, password: String!): ObtainJSONWebToken
   verifyToken(token: String): Verify
   refreshToken(refreshToken: String): Refresh
@@ -243,8 +290,9 @@ type PlayerNode implements Node {
   phoneNumber: String!
   password: String!
   emailAdress: String!
-  captains(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gte: DateTime, orderBy: String): GameNodeConnection!
-  games(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gte: DateTime, orderBy: String): GameNodeConnection!
+  profile: String
+  captains(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gte: DateTime, arena_Manager: ID, blocked: Boolean, orderBy: String): GameNodeConnection!
+  games(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gte: DateTime, arena_Manager: ID, blocked: Boolean, orderBy: String): GameNodeConnection!
 }
 
 type PlayerNodeConnection {
@@ -258,12 +306,15 @@ type PlayerNodeEdge {
 }
 
 type Query {
+  settings: ArenaFiveSettingsNode
+  manager(id: ID!): ManagerNode
+  managers(token: String!, offset: Int, before: String, after: String, first: Int, last: Int, fullName: String, orderBy: String): ManagerNodeConnection
   player(id: ID!): PlayerNode
-  players(offset: Int, before: String, after: String, first: Int, last: Int, fullName: String, orderBy: String): PlayerNodeConnection
+  players(token: String!, offset: Int, before: String, after: String, first: Int, last: Int, fullName: String, orderBy: String): PlayerNodeConnection
   game(id: ID!): GameNode
-  games(offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gte: DateTime, orderBy: String): GameNodeConnection
+  games(token: String!, offset: Int, before: String, after: String, first: Int, last: Int, type: String, startDate_Gte: DateTime, arena_Manager: ID, blocked: Boolean, orderBy: String): GameNodeConnection
   arena(id: ID!): ArenaNode
-  arenas(offset: Int, before: String, after: String, first: Int, last: Int, slug_Contains: String, slug_Icontains: String, adress_Ville: String, orderBy: String): ArenaNodeConnection
+  arenas(token: String!, offset: Int, before: String, after: String, first: Int, last: Int, slug_Contains: String, slug_Icontains: String, adress_Ville: String, orderBy: String): ArenaNodeConnection
   _debug: DjangoDebug
 }
 
@@ -277,11 +328,28 @@ type Refresh {
 input SignInInput {
   phoneNumber: String
   password: String
+  token: String!
   clientMutationId: String
 }
 
 type SignInPayload {
   user: User
+  clientMutationId: String
+}
+
+input UpdatePlayerDetailsInput {
+  id: ID!
+  fullName: String
+  phoneNumber: String
+  emailAdress: String
+  password: String
+  profile: String
+  token: String!
+  clientMutationId: String
+}
+
+type UpdatePlayerDetailsPayload {
+  player: PlayerNode
   clientMutationId: String
 }
 
@@ -294,6 +362,7 @@ type Verify {
 input VerifyCodeInput {
   code: String
   verificationSid: String
+  token: String!
   clientMutationId: String
 }
 
@@ -307,6 +376,7 @@ type VerifyCodePayload {
 
 input VerifyUserInput {
   phoneNumber: String
+  token: String!
   clientMutationId: String
 }
 

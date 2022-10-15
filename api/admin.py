@@ -4,7 +4,9 @@ from django.contrib import admin, messages
 # from django.contrib.contenttypes.admin import GenericTabularInline
 # from django.contrib.contenttypes.models import ContentType
 from django import forms
+from django.contrib.admin.templatetags.admin_urls import admin_urlname
 from django.core.exceptions import ValidationError
+from django.shortcuts import resolve_url
 from django.utils.html import strip_tags, format_html
 from modeltranslation.admin import TranslationAdmin
 
@@ -18,6 +20,9 @@ from api.models import (
     Media,
     Availability,
     ArenaFiveSettings,
+    Payment,
+    BankilyPayment,
+    PaymentGame,
 )
 from api.scripts import generate_availabilities
 
@@ -75,7 +80,8 @@ class PlayerAdmin(admin.ModelAdmin):
         "phone_number",
         "email_adress",
     )
-    list_filter = ("id", "full_name", "email_adress")
+    list_filter = ("id", "full_name", "email_adress", "phone_number")
+    search_fields = ("id", "full_name", "email_adress", "phone_number")
 
 
 @admin.register(Availability)
@@ -196,6 +202,7 @@ class GameAdmin(admin.ModelAdmin):
         "reference",
         "status",
         "amount",
+        "payment",
     )
     list_filter = (
         "captain",
@@ -217,6 +224,90 @@ class GameAdmin(admin.ModelAdmin):
         list += "</ul>"
 
         return format_html(list)
+
+    def payment(self, obj):
+        return obj.paymentgame_set.first()
+
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ("id", "created_at", "updated_at", "amount", "phone_number")
+
+
+@admin.register(BankilyPayment)
+class BankilyPaymentAdmin(admin.ModelAdmin):
+    list_display = ("transaction_id", "operation_id", "payment")
+    search_fields = ("id", "transaction_id", "operation_id")
+    list_display_links = ("transaction_id",)
+
+    def payment(self, obj):
+        return obj.payment.first()
+
+
+@admin.register(PaymentGame)
+class PaymentGameAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "p",
+        "game",
+        "player",
+        "to_be_refund",
+        "refunded",
+    )
+    search_fields = (
+        "id",
+        "player__full_name",
+        "player__email_adress",
+        "player__phone_number",
+    )
+
+    def p(self, obj):
+        url = resolve_url(admin_urlname(obj.payment._meta, "change"), obj.payment.pk)
+        return format_html('<a href="%s">%s</a>' % (url, obj.payment))
+
+    p.allow_tags = True
+    p.short_description = "Payment"
+
+    def payment(self, obj):
+        return obj.paymentgame_set.first()
+
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ("id", "created_at", "updated_at", "amount", "phone_number")
+
+
+@admin.register(BankilyPayment)
+class BankilyPaymentAdmin(admin.ModelAdmin):
+    list_display = ("transaction_id", "payment")
+    search_fields = (
+        "id",
+        "transaction_id",
+    )
+    list_display_links = ("transaction_id",)
+
+    def payment(self, obj):
+        return obj.payment.first()
+
+
+@admin.register(PaymentGame)
+class PaymentGameAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "p",
+        "game",
+        "player",
+        "to_be_refund",
+        "refunded",
+    )
+    search_fields = ("id",)
+
+    def p(self, obj):
+        url = resolve_url(admin_urlname(obj.payment._meta, "change"), obj.payment.pk)
+        return format_html('<a href="%s">%s</a>' % (url, obj.payment))
+
+    p.allow_tags = True
+    p.short_description = "Payment"
 
 
 @admin.register(ArenaFiveSettings)

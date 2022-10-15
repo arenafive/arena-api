@@ -4,7 +4,8 @@ import graphene
 from graphene import ClientIDMutation, ObjectType
 
 from api.graphql.types import PlayerNode, ManagerNode, GameNode
-from api.models import Player, Game, Arena
+from api.models import Player, Game, Arena, BankilyPayment, PaymentGame
+from api.services.payments import BankilyPaymentService, generate_operation_id
 from api.services.twilio import send_sms, verify
 from api.services.user import update_or_create_player, get_user
 from django.contrib.auth import hashers
@@ -200,6 +201,9 @@ class ChangePlayerPassword(ClientIDMutation):
 class CreateGame(ClientIDMutation):
     class Input:
         amount = graphene.String()
+        client_phone = graphene.String()
+        passcode = graphene.String()
+        language = graphene.String()
         arena_id = graphene.ID()
         captain_id = graphene.ID()
         start_date = graphene.DateTime()
@@ -208,26 +212,56 @@ class CreateGame(ClientIDMutation):
         token = graphene.String(required=True)
 
     code = graphene.String()
+    transactionId = graphene.String()
+    errorCode = graphene.Int()
+    errorMessage = graphene.String()
 
     def mutate_and_get_payload(self, info, **input):
-        input.pop("token")
-        captain_id = input.pop("captain_id", None)
-        arena_id = input.pop("arena_id")
-        captain = None
-        if captain_id:
-            captain = Player.objects.get(pk=get_UUID_from_base64(captain_id))
-        arena = Arena.objects.get(pk=get_UUID_from_base64(arena_id))
+
+        params = {
+            "amount": input.get("amount"),
+            "clientPhone": input.pop("client_phone"),
+            "passcode": input.pop("passcode"),
+            "language": input.pop("language"),
+            "operationId": generate_operation_id(),
+        }
 
         game = Game.objects.filter(
             start_date=input.get("start_date"), end_date=input.get("end_date")
         )
         if game:
-            return CreateGame(code=-1)
+            return CreateGame(
+                code=-1,
+                **{
+                    "transactionId": "",
+                    "errorCode": 1,
+                    "errorMessage": "Mobile Number is not registered",
+                }
+            )
+        pay_service = BankilyPaymentService()
+        res = pay_service.pay(**params)
 
-        game = Game.objects.create(arena=arena, captain=captain, **input)
-        if captain:
-            game.players.add(captain)
-        return CreateGame(code=game.reference)
+        if res["errorCode"] == 0:
+            p = BankilyPayment.objects.create(
+                transaction_id=res["transactionId"], operation_id=params["operationId"]
+            )
+            payment = p.payment.create(
+                amount=params.get("amount"), phone_number=params.get("clientPhone")
+            )
+            input.pop("token")
+            captain_id = input.pop("captain_id", None)
+            arena_id = input.pop("arena_id")
+            captain = None
+            if captain_id:
+                captain = Player.objects.get(pk=get_UUID_from_base64(captain_id))
+            arena = Arena.objects.get(pk=get_UUID_from_base64(arena_id))
+            game = Game.objects.create(
+                arena=arena, captain=captain, status="1", **input
+            )
+            if captain:
+                game.players.add(captain)
+            PaymentGame.objects.create(payment=payment, game=game, player=captain)
+        return CreateGame(code=game.reference, **res)
 
 
 class JoinGame(ClientIDMutation):
