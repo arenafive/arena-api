@@ -255,7 +255,9 @@ class CreateGame(ClientIDMutation):
             if captain_id:
                 captain = Player.objects.get(pk=get_UUID_from_base64(captain_id))
             arena = Arena.objects.get(pk=get_UUID_from_base64(arena_id))
-            game = Game.objects.create(arena=arena, captain=captain, **input)
+            game = Game.objects.create(
+                arena=arena, captain=captain, status="1", **input
+            )
             if captain:
                 game.players.add(captain)
             PaymentGame.objects.create(payment=payment, game=game, player=captain)
