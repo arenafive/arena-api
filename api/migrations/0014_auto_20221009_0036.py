@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("api", "0013_arenafivesettings"),
+        ("api", "0014_auto_20220908_2004"),
     ]
 
     operations = [
