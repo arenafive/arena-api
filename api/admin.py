@@ -79,6 +79,7 @@ class PlayerAdmin(admin.ModelAdmin):
         "full_name",
         "phone_number",
         "email_adress",
+        "exponent_push_token",
     )
     list_filter = ("id", "full_name", "email_adress", "phone_number")
     search_fields = ("id", "full_name", "email_adress", "phone_number")
