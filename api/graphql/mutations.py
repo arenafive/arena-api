@@ -9,6 +9,9 @@ from api.services.payments import BankilyPaymentService, generate_operation_id
 from api.services.twilio import send_sms, verify
 from api.services.user import update_or_create_player, get_user
 from django.contrib.auth import hashers
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_UUID_from_base64(id):
@@ -230,17 +233,18 @@ class CreateGame(ClientIDMutation):
             start_date=input.get("start_date"), end_date=input.get("end_date")
         )
         if game:
+            logger.info("game already exist")
             return CreateGame(
                 code=-1,
                 **{
                     "transactionId": "",
                     "errorCode": 1,
                     "errorMessage": "Mobile Number is not registered",
-                }
+                },
             )
         pay_service = BankilyPaymentService()
         res = pay_service.pay(**params)
-
+        logger.info(f"Payment have been processed with result: ({res})")
         if res["errorCode"] == 0:
             p = BankilyPayment.objects.create(
                 transaction_id=res["transactionId"], operation_id=params["operationId"]
