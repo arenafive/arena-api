@@ -180,7 +180,30 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
+LOGGING = {
+    "version": 1,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname}; {asctime}; {pathname}; {module}; {lineno}; {message}",
+            "style": "{",
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django": {
+            "level": "ERROR",
+            "handlers": ["console"],
+            "formatter": "verbose",
+        },
+        "api": {"level": "DEBUG", "handlers": ["console"], "propagande": False},
+    },
+}
 JAZZMIN_SETTINGS = {
     "site_header": "Arena",
     # Welcome text on the login screen
