@@ -267,7 +267,7 @@ class CreateGame(ClientIDMutation):
             PaymentGame.objects.create(payment=payment, game=game, player=captain)
         if game:
             code = game.reference
-        return CreateGame(code=code, *res)
+        return CreateGame(code=code, **res)
 
 
 class JoinGame(ClientIDMutation):
