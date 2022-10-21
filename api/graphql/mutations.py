@@ -124,6 +124,8 @@ class UpdatePlayerDetails(ClientIDMutation):
         phone_number = graphene.String(required=False)
         email_adress = graphene.String(required=False)
         password = graphene.String(required=False)
+        android_exponent_push_token = graphene.String(required=False)
+        ios_exponent_push_token = graphene.String(required=False)
         profile = graphene.String(required=False)
         token = graphene.String(required=True)
 
