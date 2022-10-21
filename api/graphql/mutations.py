@@ -225,7 +225,7 @@ class CreateGame(ClientIDMutation):
             "language": input.pop("language"),
             "operationId": generate_operation_id(),
         }
-
+        code = -10
         game = Game.objects.filter(
             start_date=input.get("start_date"), end_date=input.get("end_date")
         )
@@ -261,7 +261,9 @@ class CreateGame(ClientIDMutation):
             if captain:
                 game.players.add(captain)
             PaymentGame.objects.create(payment=payment, game=game, player=captain)
-        return CreateGame(code=game.reference, **res)
+        if game:
+            code = game.reference
+        return CreateGame(code=code, **res)
 
 
 class JoinGame(ClientIDMutation):
