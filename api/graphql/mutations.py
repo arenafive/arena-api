@@ -1,6 +1,7 @@
 import base64
 
 import graphene
+import requests
 from graphene import ClientIDMutation, ObjectType
 
 from api.graphql.types import PlayerNode, ManagerNode, GameNode
@@ -289,9 +290,22 @@ class JoinGame(ClientIDMutation):
         game = Game.objects.filter(reference=code).first()
 
         if game:
+            # if game.captain.pk == player.
             game.players.add(player)
+            headers = {
+                "Content-Type": "application/json",
+            }
+            data = {
+                "to": "ExponentPushToken[X_le83PLGZZknnJ29hd9hh]",
+                "title": game.captain.full_name,
+                "body": f"a rejoint votre match du {game.start_date} ",
+                "data": {"key": "Game", "obj": {"game": game}},
+            }
+            logger.info(f"Sending push notification with payload({data})")
+            requests.post(
+                "https://exp.host/--/api/v2/push/send", headers=headers, data=data
+            )
             return JoinGame(status=True, game=game)
-
         return JoinGame(status=False, game=None)
 
 
