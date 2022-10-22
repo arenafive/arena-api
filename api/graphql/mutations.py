@@ -302,9 +302,10 @@ class JoinGame(ClientIDMutation):
                 "data": {"key": "Game", "obj": {"game": game}},
             }
             logger.info(f"Sending push notification with payload({data})")
-            requests.post(
+            res = requests.post(
                 "https://exp.host/--/api/v2/push/send", headers=headers, data=data
             )
+            logger.info(f"response ({res.json()})")
             return JoinGame(status=True, game=game)
         return JoinGame(status=False, game=None)
 
