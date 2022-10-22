@@ -295,13 +295,15 @@ class JoinGame(ClientIDMutation):
             headers = {
                 "Content-Type": "application/json",
             }
+            json_data = model_to_dict(game)
+            json_data.update({"startDate": game.start_date, "endDate": game.end_date})
             data1 = {
                 "to": game.captain.android_exponent_push_token,
                 "title": game.captain.full_name,
                 "body": f"a rejoint votre match du {game.start_date} ",
                 "data": {
                     "key": "Game",
-                    "obj": {"game": json.dumps(model_to_dict(game), default=str)},
+                    "obj": {"game": json.dumps(json_data, default=str)},
                 },
             }
             data2 = {
@@ -310,7 +312,7 @@ class JoinGame(ClientIDMutation):
                 "body": f"a rejoint votre match du {game.start_date} ",
                 "data": {
                     "key": "Game",
-                    "obj": {"game": json.dumps(model_to_dict(game), default=str)},
+                    "obj": {"game": json.dumps(json_data, default=str)},
                 },
             }
             logger.info(f"Sending push notification for android with payload({data1})")
