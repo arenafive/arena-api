@@ -3,7 +3,7 @@ import json
 
 import graphene
 import requests
-from django.core import serializers
+from django.forms import model_to_dict
 from graphene import ClientIDMutation, ObjectType
 
 from api.graphql.types import PlayerNode, ManagerNode, GameNode
@@ -301,7 +301,7 @@ class JoinGame(ClientIDMutation):
                 "body": f"a rejoint votre match du {game.start_date} ",
                 "data": {
                     "key": "Game",
-                    "obj": {"game": serializers.serialize("json", game)},
+                    "obj": {"game": model_to_dict(game)},
                 },
             }
             data2 = {
@@ -310,7 +310,7 @@ class JoinGame(ClientIDMutation):
                 "body": f"a rejoint votre match du {game.start_date} ",
                 "data": {
                     "key": "Game",
-                    "obj": {"game": serializers.serialize("json", game)},
+                    "obj": {"game": model_to_dict(game)},
                 },
             }
             logger.info(f"Sending push notification for android with payload({data1})")
