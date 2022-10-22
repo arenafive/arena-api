@@ -301,7 +301,7 @@ class JoinGame(ClientIDMutation):
                 "body": f"a rejoint votre match du {game.start_date} ",
                 "data": {
                     "key": "Game",
-                    "obj": {"game": json.dumps(model_to_dict(game))},
+                    "obj": {"game": json.dumps(model_to_dict(game), default=str)},
                 },
             }
             data2 = {
@@ -310,7 +310,7 @@ class JoinGame(ClientIDMutation):
                 "body": f"a rejoint votre match du {game.start_date} ",
                 "data": {
                     "key": "Game",
-                    "obj": {"game": json.dumps(model_to_dict(game))},
+                    "obj": {"game": json.dumps(model_to_dict(game), default=str)},
                 },
             }
             logger.info(f"Sending push notification for android with payload({data1})")
