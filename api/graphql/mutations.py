@@ -298,13 +298,13 @@ class JoinGame(ClientIDMutation):
                 "to": game.captain.android_exponent_push_token,
                 "title": game.captain.full_name,
                 "body": f"a rejoint votre match du {game.start_date} ",
-                "data": {"key": "Game", "obj": {"game": game}},
+                "data": {"key": "Game", "obj": {"game": json.dumps(game)}},
             }
             data2 = {
                 "to": game.captain.ios_exponent_push_token,
                 "title": game.captain.full_name,
                 "body": f"a rejoint votre match du {game.start_date} ",
-                "data": {"key": "Game", "obj": {"game": game}},
+                "data": {"key": "Game", "obj": {"game": json.dumps(game)}},
             }
             logger.info(f"Sending push notification for android with payload({data1})")
             res = requests.post(
