@@ -4,6 +4,7 @@ import json
 import graphene
 import requests
 from django.forms import model_to_dict
+from django.utils import timezone
 from graphene import ClientIDMutation, ObjectType
 
 from api.graphql.types import PlayerNode, ManagerNode, GameNode
@@ -290,7 +291,11 @@ class JoinGame(ClientIDMutation):
         player = Player.objects.get(pk=get_UUID_from_base64(player_id))
         game = Game.objects.filter(reference=code).first()
         if game:
-            # if game.captain.pk == player.
+            if game.captain.pk == player.pk:
+                return JoinGame(status=False, game=game)
+
+            if game.start_date < timezone.now():
+                return JoinGame(status=False, game=None)
             game.players.add(player)
             headers = {
                 "Content-Type": "application/json",
