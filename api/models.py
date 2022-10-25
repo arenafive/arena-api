@@ -76,6 +76,7 @@ class Arena(models.Model):
     long = models.IntegerField(default=18)
     larg = models.IntegerField(default=12)
     price = models.IntegerField(default=5000)
+    cancel_limit = models.IntegerField(default=24, help_text="The threshold for a cancel game")
 
     def __str__(self):
         return f"Cité {self.slug}"

@@ -1,9 +1,6 @@
 import base64
-import json
-
 import graphene
-import requests
-from django.forms import model_to_dict
+
 from django.utils import timezone
 from graphene import ClientIDMutation, ObjectType
 
@@ -11,7 +8,7 @@ from api.graphql.types import PlayerNode, ManagerNode, GameNode
 from api.models import Player, Game, Arena, BankilyPayment, PaymentGame
 from api.services.payments import BankilyPaymentService, generate_operation_id
 from api.services.twilio import send_sms, verify
-from api.services.user import update_or_create_player, get_user
+from api.services.user import update_or_create_player, get_user, send_notification
 from django.contrib.auth import hashers
 import logging
 
@@ -293,49 +290,31 @@ class JoinGame(ClientIDMutation):
         if game:
             if game.captain.pk == player.pk:
                 return JoinGame(status=False, game=game)
-
             if game.start_date < timezone.now():
                 return JoinGame(status=False, game=None)
             game.players.add(player)
-            headers = {
-                "Content-Type": "application/json",
-            }
-            json_data = model_to_dict(game)
-            json_data.update({"startDate": game.start_date, "endDate": game.end_date})
-            data1 = {
-                "to": game.captain.android_exponent_push_token,
-                "title": game.captain.full_name,
-                "body": f"a rejoint votre match du {game.start_date} ",
-                "data": {
-                    "key": "Game",
-                    "obj": {"game": json.dumps(json_data, default=str)},
-                },
-            }
-            data2 = {
-                "to": game.captain.ios_exponent_push_token,
-                "title": game.captain.full_name,
-                "body": f"a rejoint votre match du {game.start_date} ",
-                "data": {
-                    "key": "Game",
-                    "obj": {"game": json.dumps(json_data, default=str)},
-                },
-            }
-            logger.info(f"Sending push notification for android with payload({data1})")
-            res = requests.post(
-                "https://exp.host/--/api/v2/push/send",
-                headers=headers,
-                data=json.dumps(data1),
-            )
-            logger.info(f"Sending push notification for ios with payload({data2})")
-            requests.post(
-                "https://exp.host/--/api/v2/push/send",
-                headers=headers,
-                data=json.dumps(data2),
-            )
-            logger.info(f"response  for android({res})")
-            logger.info(f"response for ios ({res})")
+            send_notification(game=game, message=f"a rejoint votre match du {game.start_date}")
             return JoinGame(status=True, game=game)
         return JoinGame(status=False, game=None)
+
+
+class CancelGame(ClientIDMutation):
+    class Input:
+        code = graphene.String()
+        token = graphene.String(required=True)
+
+    status = graphene.Boolean()
+    game = graphene.Field(GameNode)
+
+    def mutate_and_get_payload(self, info, **input):
+        code = input.pop("code")
+        game = Game.objects.filter(reference=code).first()
+        game.status = "2"
+        game.save()
+        p = PaymentGame.objects.get(game=game)
+        p.to_be_refund(True)
+        send_notification(game=game, message=f"Votre match du {game.start_date} vient d'etre annuler, nous procedrons votre remboursement dans un delai de 24h")
+        return JoinGame(status=True, game=game)
 
 
 class UserMutation(ObjectType):
@@ -352,3 +331,4 @@ class UserMutation(ObjectType):
 class GameMutation(ObjectType):
     create_game = CreateGame.Field()
     join_game = JoinGame.Field()
+    cancel_game = CancelGame.Field()
