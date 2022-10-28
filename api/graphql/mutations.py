@@ -236,7 +236,7 @@ class CreateGame(ClientIDMutation):
             start_date=input.get("start_date"), end_date=input.get("end_date")
         )
         if game:
-            logger.info(f"game ({game}) already exist")
+            logger.info(f"game ({game.reference}) already exist")
             return CreateGame(
                 code=-1,
                 **{
