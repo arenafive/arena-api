@@ -293,7 +293,9 @@ class JoinGame(ClientIDMutation):
             if game.start_date < timezone.now():
                 return JoinGame(status=False, game=None)
             game.players.add(player)
-            send_notification(game=game, message=f"a rejoint votre match du {game.start_date}")
+            send_notification(
+                game=game, message=f"a rejoint votre match du {game.start_date}"
+            )
             return JoinGame(status=True, game=game)
         return JoinGame(status=False, game=None)
 
@@ -312,8 +314,11 @@ class CancelGame(ClientIDMutation):
         game.status = "2"
         game.save()
         p = PaymentGame.objects.get(game=game)
-        p.to_be_refund(True)
-        send_notification(game=game, message=f"Votre match du {game.start_date} vient d'etre annuler, nous procedrons votre remboursement dans un delai de 24h")
+        p.to_be_refund = True
+        send_notification(
+            game=game,
+            message=f"Votre match du {game.start_date} vient d'etre annuler, nous procedrons votre remboursement dans un delai de 24h",
+        )
         return JoinGame(status=True, game=game)
 
 
