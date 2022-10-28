@@ -233,7 +233,9 @@ class CreateGame(ClientIDMutation):
         }
         code = -10
         game = Game.objects.filter(
-            start_date=input.get("start_date"), end_date=input.get("end_date")
+            arena__pk__in=get_UUID_from_base64(input.get("arena_id")),
+            start_date=input.get("start_date"),
+            end_date=input.get("end_date"),
         )
         if game:
             logger.info(f"game ({game[0].reference}) already exist")
@@ -241,7 +243,7 @@ class CreateGame(ClientIDMutation):
                 code=-1,
                 **{
                     "transactionId": "",
-                    "errorCode": 1,
+                    "errorCode": -10,
                     "errorMessage": "Mobile Number is not registered",
                 },
             )
