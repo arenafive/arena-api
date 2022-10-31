@@ -326,7 +326,7 @@ class CancelGame(ClientIDMutation):
             game=game,
             message=f"Votre match du {game.start_date} vient d'etre annuler, nous procedrons votre remboursement dans un delai de 24h",
         )
-        for player in game.players:
+        for player in game.players.all():
             if player.pk != game.captain.pk:
                 send_notification(
                     user=player,
