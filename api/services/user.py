@@ -31,15 +31,15 @@ def get_user(**kwargs):
     return user
 
 
-def send_notification(game, message):
+def send_notification(user, title, game, message):
     headers = {
         "Content-Type": "application/json",
     }
     json_data = model_to_dict(game)
     json_data.update({"startDate": game.start_date, "endDate": game.end_date})
     data1 = {
-        "to": game.captain.android_exponent_push_token,
-        "title": game.captain.full_name,
+        "to": user.android_exponent_push_token,
+        "title": title,
         "body": message,
         "data": {
             "key": "Game",
@@ -47,8 +47,8 @@ def send_notification(game, message):
         },
     }
     data2 = {
-        "to": game.captain.ios_exponent_push_token,
-        "title": game.captain.full_name,
+        "to": user.ios_exponent_push_token,
+        "title": title,
         "body": message,
         "data": {
             "key": "Game",
