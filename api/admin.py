@@ -262,6 +262,26 @@ class PaymentGameAdmin(admin.ModelAdmin):
         "player__email_adress",
         "player__phone_number",
     )
+    list_filter = (
+        "to_be_refund",
+        "refunded",
+    )
+
+    actions = ("make_refund",)
+
+    @admin.action(description="refund payments")
+    def make_refund(self, request, queryset):
+        count = 0
+        for payment in queryset:
+            payment.to_be_refund = False
+            payment.refund = True
+            payment.save()
+            count += 1
+        self.message_user(
+            request=request,
+            level=messages.INFO,
+            message=f"{count} remboursement(s) ont été effectués",
+        )
 
     def p(self, obj):
         url = resolve_url(admin_urlname(obj.payment._meta, "change"), obj.payment.pk)
