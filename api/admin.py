@@ -274,7 +274,7 @@ class PaymentGameAdmin(admin.ModelAdmin):
         count = 0
         for payment in queryset:
             payment.to_be_refund = False
-            payment.refund = True
+            payment.refunded = True
             payment.save()
             count += 1
         self.message_user(
