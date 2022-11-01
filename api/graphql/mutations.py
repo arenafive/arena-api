@@ -320,6 +320,7 @@ class CancelGame(ClientIDMutation):
         game.save()
         p = PaymentGame.objects.get(game=game)
         p.to_be_refund = True
+        p.save()
         send_notification(
             user=game.captain,
             title="Match annulé",
