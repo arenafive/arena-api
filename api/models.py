@@ -24,8 +24,8 @@ class Adress(models.Model):
 
 
 class TimeStampCreation(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
 class Media(TimeStampCreation):
@@ -78,7 +78,9 @@ class Arena(models.Model):
     long = models.IntegerField(default=18)
     larg = models.IntegerField(default=12)
     price = models.IntegerField(default=5000)
-    cancel_limit = models.IntegerField(default=24, help_text="The threshold for a cancel game")
+    cancel_limit = models.IntegerField(
+        default=24, help_text="The threshold for a cancel game"
+    )
 
     def __str__(self):
         return f"Cité {self.slug}"
