@@ -229,9 +229,9 @@ class CreateGame(ClientIDMutation):
 
         params = {
             "amount": input.get("amount"),
-            "clientPhone": input.pop("client_phone"),
-            "passcode": input.pop("passcode"),
-            "language": input.pop("language"),
+            "clientPhone": input.pop("client_phone", None),
+            "passcode": input.pop("passcode", None),
+            "language": input.pop("language", None),
             "operationId": generate_operation_id(),
         }
         code = -10
