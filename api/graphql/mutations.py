@@ -136,6 +136,9 @@ class UpdatePlayerDetails(ClientIDMutation):
         input.pop("token")
         id = input.pop("id")
         try:
+            logger.info(
+                f"updating player ({get_UUID_from_base64(id)}) with data ({input})"
+            )
             player, created = Player.objects.update_or_create(
                 pk=get_UUID_from_base64(id), defaults={**input}
             )
@@ -232,6 +235,13 @@ class CreateGame(ClientIDMutation):
             "operationId": generate_operation_id(),
         }
         code = -10
+        input.pop("token")
+        captain_id = input.pop("captain_id", None)
+        arena_id = input.pop("arena_id")
+        captain = None
+        if captain_id:
+            captain = Player.objects.get(pk=get_UUID_from_base64(captain_id))
+        arena = Arena.objects.get(pk=get_UUID_from_base64(arena_id))
         game = Game.objects.filter(
             arena__pk__in=get_UUID_from_base64(input.get("arena_id")),
             start_date=input.get("start_date"),
@@ -247,6 +257,10 @@ class CreateGame(ClientIDMutation):
                     "errorMessage": "Mobile Number is not registered",
                 },
             )
+
+        if input.get("blocked", None):
+            Game.objects.create(arena=arena, captain=captain, status="1", **input)
+            return CreateGame(code=code)
         pay_service = BankilyPaymentService()
         res = pay_service.pay(**params)
         logger.info(f"Payment have been processed with result: ({res})")
@@ -257,13 +271,6 @@ class CreateGame(ClientIDMutation):
             payment = p.payment.create(
                 amount=params.get("amount"), phone_number=params.get("clientPhone")
             )
-            input.pop("token")
-            captain_id = input.pop("captain_id", None)
-            arena_id = input.pop("arena_id")
-            captain = None
-            if captain_id:
-                captain = Player.objects.get(pk=get_UUID_from_base64(captain_id))
-            arena = Arena.objects.get(pk=get_UUID_from_base64(arena_id))
             game = Game.objects.create(
                 arena=arena, captain=captain, status="1", **input
             )
