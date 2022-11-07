@@ -115,14 +115,12 @@ class ManagerAdmin(admin.ModelAdmin, DetailAdminMixin):
         "full_name",
         "phone_number",
         "email_adress",
+        "android_exponent_push_token",
+        "ios_exponent_push_token",
+        "created_at",
+        "updated_at",
     )
     list_filter = ("id", "full_name", "email_adress")
-
-    """def get_list_display(self, request):
-        return DetailAdminMixin.list_display"""
-
-    """def content_object(self, obj):
-        return UserDetail.objects.get(content_type=self.manager_type, object_id=obj.pk)"""
 
 
 @admin.register(Adress)
