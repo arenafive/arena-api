@@ -130,7 +130,7 @@ class UpdatePlayerDetails(ClientIDMutation):
         profile = graphene.String(required=False)
         token = graphene.String(required=True)
 
-    player = graphene.Field(User)
+    player = graphene.Field(PlayerNode)
 
     def mutate_and_get_payload(self, info, **input):
         input.pop("token")
@@ -148,7 +148,7 @@ class UpdatePlayerDetails(ClientIDMutation):
             manager, created = Manager.objects.update_or_create(
                 pk=get_UUID_from_base64(id), defaults={**input}
             )
-            return UpdatePlayerDetails(player=manager)
+            return UpdatePlayerDetails(player=None)
 
 
 class DeleteUserAccount(ClientIDMutation):
