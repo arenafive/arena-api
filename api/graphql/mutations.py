@@ -5,7 +5,7 @@ from django.utils import timezone
 from graphene import ClientIDMutation, ObjectType
 
 from api.graphql.types import PlayerNode, ManagerNode, GameNode
-from api.models import Player, Game, Arena, BankilyPayment, PaymentGame
+from api.models import Player, Game, Arena, BankilyPayment, PaymentGame, Manager
 from api.services.payments import BankilyPaymentService, generate_operation_id
 from api.services.twilio import send_sms, verify
 from api.services.user import update_or_create_player, get_user, send_notification
@@ -130,7 +130,7 @@ class UpdatePlayerDetails(ClientIDMutation):
         profile = graphene.String(required=False)
         token = graphene.String(required=True)
 
-    player = graphene.Field(PlayerNode)
+    player = graphene.Field(User)
 
     def mutate_and_get_payload(self, info, **input):
         input.pop("token")
@@ -144,8 +144,11 @@ class UpdatePlayerDetails(ClientIDMutation):
             )
             return UpdatePlayerDetails(player=player)
 
-        except Exception as e:
-            raise e
+        except Exception:
+            manager, created = Manager.objects.update_or_create(
+                pk=get_UUID_from_base64(id), defaults={**input}
+            )
+            return UpdatePlayerDetails(player=manager)
 
 
 class DeleteUserAccount(ClientIDMutation):
