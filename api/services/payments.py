@@ -16,20 +16,20 @@ class BankilyPaymentService:
             "username": settings.BANKILY_USERNAME,
             "password": settings.BANKILY_PASSWORD,
         }
-
         response = requests.post(
             url=self.endpoint + "authentification",
             data=payload,
         )
         if response.status_code == 200:
             self.token = response.json()["access_token"]
+        else:
+            raise f"Bankily api is down {response.content}"
 
     def pay(self, **kwargs):
         headers = {"Authorization": f"Bearer {self.token}"}
         response = requests.post(
             url=self.endpoint + "payment", json=kwargs, headers=headers
         )
-
         return response.json()
 
 
