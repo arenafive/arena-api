@@ -7,3 +7,6 @@ https://www.tecmint.com/pyenv-install-and-manage-multiple-python-versions-in-lin
 ## Install Poetry (dependencies management)
 
 https://python-poetry.org/docs/#installation
+
+
+## Changelog's coming

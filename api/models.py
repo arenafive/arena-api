@@ -24,8 +24,8 @@ class Adress(models.Model):
 
 
 class TimeStampCreation(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
 class Media(TimeStampCreation):
@@ -41,6 +41,10 @@ class InformationDetails(TimeStampCreation):
     password = models.CharField(max_length=1000)
     email_adress = models.EmailField(blank=True)
     profile = models.CharField(max_length=5000, null=True, blank=True)
+    android_exponent_push_token = models.CharField(
+        max_length=5000, null=True, blank=True
+    )
+    ios_exponent_push_token = models.CharField(max_length=5000, null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -51,6 +55,8 @@ class InformationDetails(TimeStampCreation):
 
 
 class Manager(InformationDetails):
+    bankily_number = models.CharField(max_length=20)
+
     def __str__(self):
         return f"{self.full_name} : {self.email_adress}"
 
@@ -66,10 +72,15 @@ class Arena(models.Model):
     is_partener = models.BooleanField(default=False)
     note = models.IntegerField()
     adress = models.ForeignKey(Adress, on_delete=models.CASCADE)
-    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
+    manager = models.ForeignKey(
+        Manager, on_delete=models.CASCADE, related_name="arenas"
+    )
     long = models.IntegerField(default=18)
     larg = models.IntegerField(default=12)
     price = models.IntegerField(default=5000)
+    cancel_limit = models.IntegerField(
+        default=24, help_text="The threshold for a cancel game"
+    )
 
     def __str__(self):
         return f"Cité {self.slug}"
@@ -140,9 +151,14 @@ class Game(models.Model):
 
     status = models.CharField(choices=STATUS_CHOICES, max_length=10, default="0")
     amount = models.IntegerField()
+    blocked = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"This Match is organised by {self.captain}"
+        return (
+            f"This Match is organised by {self.captain}"
+            if not self.blocked
+            else f"This Match is organised by {self.arena.manager.full_name}"
+        )
 
 
 class StarOfTheGame(models.Model):
@@ -161,12 +177,17 @@ class Payment(TimeStampCreation):
     amount = models.IntegerField()
     phone_number = models.CharField(max_length=20)
 
+    def __str__(self):
+        return f"{self.content_type} | {self.id}"
+
 
 class BankilyPayment(models.Model):
+    operation_id = models.CharField(max_length=200, blank=True, null=True)
     payment = GenericRelation(Payment)
+    transaction_id = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
-        return "By Bankily"
+        return self.transaction_id
 
 
 class MasrviPayment(models.Model):
@@ -185,12 +206,24 @@ class StripePayment(models.Model):
 
 
 class PaymentGame(models.Model):
-    payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
+    payment = models.ForeignKey(
+        Payment, on_delete=models.CASCADE, related_name="payment"
+    )
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     to_be_refund = models.BooleanField(default=False)
     refunded = models.BooleanField(default=False)
 
-    @property
-    def slug(self):
+    def __str__(self):
         return f"paiment of {self.player} by {self.payment}"
+
+
+class ArenaFiveSettings(TimeStampCreation):
+    portable = models.CharField(max_length=20, blank=True, null=True)
+    fix_number = models.CharField(max_length=20, blank=True, null=True)
+    bankily_number = models.CharField(max_length=20, blank=True, null=True)
+    bankily_merchant_id = models.CharField(max_length=20, blank=True, null=True)
+    maservi_number = models.CharField(max_length=20, blank=True, null=True)
+    twitter_link = models.CharField(max_length=500, blank=True, null=True)
+    facebook_link = models.CharField(max_length=500, blank=True, null=True)
+    whatsapp_number = models.CharField(max_length=20, blank=True, null=True)
