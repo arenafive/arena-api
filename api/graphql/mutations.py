@@ -153,7 +153,8 @@ class UpdatePlayerDetails(ClientIDMutation):
 
 class DeleteUserAccount(ClientIDMutation):
     class Input:
-        id = graphene.ID(required=True)
+        phone_number = graphene.String(required=True)
+        password = graphene.String(required=True)
         token = graphene.String(required=True)
 
     status_code = graphene.String()
@@ -164,13 +165,17 @@ class DeleteUserAccount(ClientIDMutation):
         message = "success"
 
         input.pop("token")
-        id = input.pop("id")
+        phone_number = input.get("phone_number")
+        password = input.get("password")
+        logger.warning("deleting user")
         try:
-            player = Player.objects.get(pk=get_UUID_from_base64(id))
-            player.delete()
-        except Exception as e:
-            status_code = 0
-            message = e
+            user = get_user(phone_number=phone_number)
+            if not hashers.check_password(password=password, encoded=user.password):
+                raise Exception("error")
+            logger.warning(f"deleting user {user}")
+            user.delete()
+        except Exception:
+            raise Exception("mot de passe incorrect !")
         return DeleteUserAccount(status_code=status_code, message=message)
 
 
