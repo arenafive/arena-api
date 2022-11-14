@@ -306,8 +306,14 @@ class JoinGame(ClientIDMutation):
         game = Game.objects.filter(reference=code).first()
         if game:
             if game.captain.pk == player.pk:
+                logger.warning(
+                    f"impossible to join the game ({game}) because your the owner"
+                )
                 return JoinGame(status=False, game=game)
             if game.start_date < timezone.now():
+                logger.warning(
+                    f"impossible to join the game ({game}) because it pasted at {game.start_date} ==> {timezone.now()}"
+                )
                 return JoinGame(status=False, game=None)
             game.players.add(player)
             send_notification(
@@ -317,6 +323,7 @@ class JoinGame(ClientIDMutation):
                 message=f"a rejoint votre match du {game.start_date}",
             )
             return JoinGame(status=True, game=game)
+        logger.warning(f"impossible to join the game ({game}) because it doesnt exist")
         return JoinGame(status=False, game=None)
 
 
