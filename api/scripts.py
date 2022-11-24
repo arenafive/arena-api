@@ -45,7 +45,9 @@ def generate_availabilities(queryset):
                     price=5000,
                     arena=arena,
                 )
-
+                availabilities.append(av0)
+                availabilities.append(av1)
+                availabilities.append(av2)
                 for i in range(10, 23):
                     av = Availability(
                         day=day,
@@ -59,16 +61,13 @@ def generate_availabilities(queryset):
                     availabilities.append(av)
                 av3 = Availability(
                     day=day,
-                    start_hour=0,
+                    start_hour=23,
                     start_minute=0,
-                    end_hour=1,
+                    end_hour=0,
                     end_minute=0,
                     price=5000,
                     arena=arena,
                 )
-                availabilities.append(av0)
-                availabilities.append(av1)
-                availabilities.append(av2)
                 availabilities.append(av3)
     if availabilities:
         Availability.objects.bulk_create(availabilities, batch_size=100)
