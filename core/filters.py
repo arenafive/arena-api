@@ -11,6 +11,9 @@ class GameFilter(FilterSet):
             "start_date": ["gte"],
             "arena__manager": ["exact"],
             "blocked": ["exact"],
+            "status": ["exact"],
+            "reference": ["exact"],
+            "amount": ["lte"],
         }
 
     order_by = OrderingFilter(fields=("created_date", "start_date"))
@@ -42,6 +45,14 @@ class ArenaFilter(FilterSet):
         fields = {
             "slug": ["contains", "icontains"],
             "adress__ville": ["exact"],
+            "is_archived": ["exact"],
+            "adress__quartier": ["exact"],
+            "manager": ["exact"],
         }
 
-    order_by = OrderingFilter(fields=("created_at",))
+    order_by = OrderingFilter(
+        fields=(
+            "created_at",
+            "order",
+        )
+    )
