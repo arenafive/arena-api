@@ -11,7 +11,7 @@ from api.graphql.types import (
     ManagerNode,
     ArenaFiveSettingsNode,
 )
-from api.models import ArenaFiveSettings
+from api.models import ArenaFiveSettings, Arena
 
 
 class GameQuery(ObjectType):
@@ -38,6 +38,10 @@ class ArenaQuery(ObjectType):
     arenas = DjangoFilterConnectionField(
         ArenaNode, token=graphene.String(required=True)
     )
+
+    @login_required
+    def resolve_arenas(self, info, **kwargs):
+        return Arena.objects.filter(is_archived=False).order_by("order")
 
 
 class ArenaFiveSettingsQuery(ObjectType):

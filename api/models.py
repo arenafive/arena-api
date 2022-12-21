@@ -81,6 +81,8 @@ class Arena(models.Model):
     cancel_limit = models.IntegerField(
         default=24, help_text="The threshold for a cancel game"
     )
+    order = models.IntegerField(default=1000)
+    is_archived = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Cité {self.slug}"

@@ -151,6 +151,7 @@ class ArenaAdmin(TranslationAdmin, admin.ModelAdmin):
         "manager",
         "note",
         "is_partener",
+        "is_archived",
         "description",
     )
     list_filter = (
