@@ -153,6 +153,7 @@ class ArenaAdmin(TranslationAdmin, admin.ModelAdmin):
         "is_partener",
         "is_archived",
         "description",
+        "is_archived",
     )
     list_filter = (
         "id",
@@ -164,6 +165,7 @@ class ArenaAdmin(TranslationAdmin, admin.ModelAdmin):
         "is_partener",
         "description",
         "availabilities",
+        "is_archived",
     )
     readonly_fields = ("availabilities",)
     inlines = [
@@ -198,8 +200,8 @@ class GameAdmin(admin.ModelAdmin):
         "end_date",
         "type",
         "captain",
+        "arena",
         "attendee",
-        "score",
         "reference",
         "status",
         "amount",
