@@ -6,7 +6,7 @@ ENV PATH="/root/.local/bin:/root/.poetry/bin:${PATH}" \
     PYTHONUNBUFFERED=1
 WORKDIR /code
 COPY pyproject.toml poetry.lock /code/
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python - && \
+RUN curl -sSL https://install.python-poetry.org | python - && \
 	poetry config virtualenvs.create false && \
 	poetry config virtualenvs.in-project false && \
 	poetry install

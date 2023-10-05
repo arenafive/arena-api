@@ -19,9 +19,11 @@ from django.views.decorators.csrf import csrf_exempt
 from graphene_django.views import GraphQLView
 
 GraphQLView.graphiql_template = "graphene_graphiql_explorer/graphiql.html"
-
+def trigger_error(request):
+    division_by_zero = 1 / 0
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    path('sentry-debug/', trigger_error),
 ]

@@ -16,6 +16,8 @@ from datetime import timedelta
 import environ
 
 from pathlib import Path
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +39,12 @@ env = environ.Env(
     BANKILY_USERNAME=(str, ""),
     BANKILY_PASSWORD=(str, ""),
     DEBUG=(bool, False),
+    SENTRY_DSN=(str, None),
+    SENTRY_TRACES_SAMPLE_RATE=(float, 0.0),
+    SENTRY_PROFILES_SAMPLE_RATE=(float, 0.0),
+    SENTRY_ENVIRONMENT=(str, "local"),
+    CI_BUILD_REF_SLUG=(str, "latest"),
+    CI_COMMIT_SHA=(str, "latest"),
 )
 
 env.read_env(os.path.join(BASE_DIR, ".env"), overwrite=True)
@@ -245,6 +253,21 @@ JAZZMIN_SETTINGS = {
     "default_icon_parents": "fas far fa-key",
     "default_icon_children": "fas fa-key",
 }
+
+# SENTRY CONFIGURATION
+CI_COMMIT_SHA = env("CI_COMMIT_SHA")
+CI_BUILD_REF_SLUG = env("CI_BUILD_REF_SLUG")
+VERSION = f"{CI_BUILD_REF_SLUG}-{CI_COMMIT_SHA}"
+sentry_sdk.init(
+    dsn=env("SENTRY_DSN"),
+    environment=env("SENTRY_ENVIRONMENT"),
+    integrations=[DjangoIntegration()],
+    #ca_certs=env("REQUESTS_CA_BUNDLE"),
+    attach_stacktrace=True,
+    release=VERSION,
+    traces_sample_rate=env("SENTRY_TRACES_SAMPLE_RATE"),
+    profiles_sample_rate=env("SENTRY_PROFILES_SAMPLE_RATE"),
+)
 
 MODELTRANSLATION_LANGUAGES = ("fr", "ar")
 MODELTRANSLATION_DEFAULT_LANGUAGE = "fr"
