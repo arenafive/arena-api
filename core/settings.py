@@ -255,16 +255,13 @@ JAZZMIN_SETTINGS = {
 }
 
 # SENTRY CONFIGURATION
-CI_COMMIT_SHA = env("CI_COMMIT_SHA")
-CI_BUILD_REF_SLUG = env("CI_BUILD_REF_SLUG")
-VERSION = f"{CI_BUILD_REF_SLUG}-{CI_COMMIT_SHA}"
 sentry_sdk.init(
     dsn=env("SENTRY_DSN"),
     environment=env("SENTRY_ENVIRONMENT"),
     integrations=[DjangoIntegration()],
     #ca_certs=env("REQUESTS_CA_BUNDLE"),
     attach_stacktrace=True,
-    release=VERSION,
+    release=f"{env('CI_BUILD_REF_SLUG')}-{env('CI_COMMIT_SHA')}",
     traces_sample_rate=env("SENTRY_TRACES_SAMPLE_RATE"),
     profiles_sample_rate=env("SENTRY_PROFILES_SAMPLE_RATE"),
 )
